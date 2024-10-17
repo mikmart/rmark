@@ -1,0 +1,2 @@
+#' @useDynLib rmark
+NULL
