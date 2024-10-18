@@ -2,13 +2,19 @@
 % Please edit documentation in R/rmark.R
 \name{parse_md}
 \alias{parse_md}
-\title{Parse Markdown}
+\title{Parse Markdown text}
 \usage{
 parse_md(x)
 }
 \arguments{
-\item{x}{A string of text containing Markdown.}
+\item{x}{A character vector of lines of Markdown.}
+}
+\value{
+A markdown node.
 }
 \description{
-Parse Markdown
+Parse Markdown text
+}
+\examples{
+parse_md("# Hello")
 }
