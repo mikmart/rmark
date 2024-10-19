@@ -223,6 +223,69 @@ md_list_tight <- function(x) {
   .Call("rmark_node_set_list_tight", x, as.logical(value))
 }
 
+# TODO: Add node type validation to rest of the accessors below.
+
+#' @rdname md_node
+#' @export
+md_fence_info <- function(x) {
+  .Call("rmark_node_get_fence_info", x)
+}
+
+#' @rdname md_node
+#' @export
+`md_fence_info<-` <- function(x, value) {
+  .Call("rmark_node_set_fence_info", x, as.character(value))
+}
+
+#' @rdname md_node
+#' @export
+md_url <- function(x) {
+  .Call("rmark_node_get_url", x)
+}
+
+#' @rdname md_node
+#' @export
+`md_url<-` <- function(x, value) {
+  .Call("rmark_node_set_url", x, as.character(value))
+}
+
+#' @rdname md_node
+#' @export
+md_title <- function(x) {
+  .Call("rmark_node_get_title", x)
+}
+
+#' @rdname md_node
+#' @export
+`md_title<-` <- function(x, value) {
+  .Call("rmark_node_set_title", x, as.character(value))
+}
+
+#' @rdname md_node
+#' @export
+md_start_line <- function(x) {
+  .Call("rmark_node_get_start_line", x)
+}
+
+#' @rdname md_node
+#' @export
+md_start_column <- function(x) {
+  .Call("rmark_node_get_start_column", x)
+}
+
+#' @rdname md_node
+#' @export
+md_end_line <- function(x) {
+  .Call("rmark_node_get_end_line", x)
+}
+
+#' @rdname md_node
+#' @export
+md_end_column <- function(x) {
+  .Call("rmark_node_get_end_column", x)
+}
+
+
 #' @export
 print.rmark_node <- function(x, ...) {
   cat(format(x, ...))

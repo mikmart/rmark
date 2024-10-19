@@ -248,6 +248,66 @@ SEXP rmark_node_set_list_tight(SEXP x, SEXP value) {
     return x;
 }
 
+SEXP rmark_node_get_fence_info(SEXP x) {
+    const char *info = cmark_node_get_fence_info(NODE(x));
+    return (info) ? Rf_mkStringUTF8(info) : Rf_ScalarString(NA_STRING);
+}
+
+SEXP rmark_node_set_fence_info(SEXP x, SEXP value) {
+    const char *info = Rf_translateCharUTF8(STRING_ELT(value, 0));
+    if (!cmark_node_set_fence_info(NODE(x), info)) {
+        Rf_error("Failed to set node fence info to \"%s\".", info);
+    };
+    return x;
+}
+
+SEXP rmark_node_get_url(SEXP x) {
+    const char *url = cmark_node_get_url(NODE(x));
+    return (url) ? Rf_mkStringUTF8(url) : Rf_ScalarString(NA_STRING);
+}
+
+SEXP rmark_node_set_url(SEXP x, SEXP value) {
+    const char *url = Rf_translateCharUTF8(STRING_ELT(value, 0));
+    if (!cmark_node_set_url(NODE(x), url)) {
+        Rf_error("Failed to set node url to \"%s\".", url);
+    };
+    return x;
+}
+
+SEXP rmark_node_get_title(SEXP x) {
+    const char *title = cmark_node_get_title(NODE(x));
+    return (title) ? Rf_mkStringUTF8(title) : Rf_ScalarString(NA_STRING);
+}
+
+SEXP rmark_node_set_title(SEXP x, SEXP value) {
+    const char *title = Rf_translateCharUTF8(STRING_ELT(value, 0));
+    if (!cmark_node_set_title(NODE(x), title)) {
+        Rf_error("Failed to set node title to \"%s\".", title);
+    };
+    return x;
+}
+
+// TODO: on_enter and on_exit for custom nodes not supported.
+
+SEXP rmark_node_get_start_line(SEXP x) {
+    return Rf_ScalarInteger(cmark_node_get_start_line(NODE(x)));
+}
+
+SEXP rmark_node_get_start_column(SEXP x) {
+    return Rf_ScalarInteger(cmark_node_get_start_column(NODE(x)));
+}
+
+SEXP rmark_node_get_end_line(SEXP x) {
+    return Rf_ScalarInteger(cmark_node_get_end_line(NODE(x)));
+}
+
+SEXP rmark_node_get_end_column(SEXP x) {
+    return Rf_ScalarInteger(cmark_node_get_end_column(NODE(x)));
+}
+
+
+/** Tree Manipulation */
+
 SEXP rmark_read_md(SEXP x) {
     static_assert(R_CONNECTIONS_VERSION == 1);
     Rconnection conn = R_GetConnection(x);
