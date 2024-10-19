@@ -22,7 +22,7 @@ parse_md <- function(x) {
   if (!is.character(x))
     x <- as.character(x)
   if (length(x) > 1)
-    paste(x, collapse = "\n")
+    x <- paste(x, collapse = "\n")
   .Call("rmark_parse_md", x)
 }
 
