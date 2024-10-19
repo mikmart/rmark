@@ -298,6 +298,50 @@ md_end_column <- function(x) {
 }
 
 
+#' Tree Manipulation
+#' @param x A markdown node.
+#' @param new A markdown node.
+#' @return `NULL`, invisibly.
+#' @name md_insert
+NULL
+
+#' @rdname md_insert
+#' @export
+md_unlink <- function(x) {
+  invisible(.Call("rmark_node_unlink", x))
+}
+
+#' @rdname md_insert
+#' @export
+md_insert_before <- function(x, new) {
+  invisible(.Call("rmark_node_insert_before", x, new))
+}
+
+#' @rdname md_insert
+#' @export
+md_insert_after <- function(x, new) {
+  invisible(.Call("rmark_node_insert_after", x, new))
+}
+
+#' @rdname md_insert
+#' @export
+md_replace <- function(x, new) {
+  invisible(.Call("rmark_node_replace", x, new))
+}
+
+#' @rdname md_insert
+#' @export
+md_prepend_child <- function(x, new) {
+  invisible(.Call("rmark_node_prepend_child", x, new))
+}
+
+#' @rdname md_insert
+#' @export
+md_append_child <- function(x, new) {
+  invisible(.Call("rmark_node_append_child", x, new))
+}
+
+
 #' @export
 print.rmark_node <- function(x, ...) {
   cat(format(x, ...))

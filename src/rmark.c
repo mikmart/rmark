@@ -295,8 +295,51 @@ SEXP rmark_node_get_end_column(SEXP x) {
     return Rf_ScalarInteger(cmark_node_get_end_column(NODE(x)));
 }
 
-
 /** Tree Manipulation */
+
+// TODO: Handle memory management.
+
+SEXP rmark_node_unlink(SEXP x) {
+    cmark_node_unlink(NODE(x));
+    return R_NilValue;
+}
+
+SEXP rmark_node_insert_before(SEXP x, SEXP new) {
+    if (!cmark_node_insert_before(NODE(x), NODE(new))) {
+        Rf_error("Failed to insert node.\n");
+    }
+    return R_NilValue;
+}
+
+SEXP rmark_node_insert_after(SEXP x, SEXP new) {
+    if (!cmark_node_insert_after(NODE(x), NODE(new))) {
+        Rf_error("Failed to insert node.\n");
+    }
+    return R_NilValue;
+}
+
+SEXP rmark_node_replace(SEXP x, SEXP new) {
+    if (!cmark_node_replace(NODE(x), NODE(new))) {
+        Rf_error("Failed to replace node.\n");
+    }
+    return R_NilValue;
+}
+
+SEXP rmark_node_prepend_child(SEXP x, SEXP new) {
+    if (!cmark_node_prepend_child(NODE(x), NODE(new))) {
+        Rf_error("Failed to insert node.");
+    };
+    return R_NilValue;
+}
+
+SEXP rmark_node_append_child(SEXP x, SEXP new) {
+    if (!cmark_node_append_child(NODE(x), NODE(new))) {
+        Rf_error("Failed to insert node.");
+    };
+    return R_NilValue;
+}
+
+// TODO: Support consolidate text nodes? What if we hold external pointers to them?
 
 /** Parsing */
 
