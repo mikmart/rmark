@@ -53,30 +53,69 @@ md_type <- function(x) {
 
 #' @rdname md_node
 #' @export
-md_first_child <- function(x) {
-  .Call("rmark_node_first_child", x)
-}
-
-#' @rdname md_node
-#' @export
 md_literal <- function(x) {
   .Call("rmark_node_get_literal", x)
 }
 
-#' @rdname md_node
+
+#' Classification
+#' @param x A markdown node.
+#' @name md_is
+NULL
+
+#' @rdname md_is
 #' @export
 md_is_block <- function(x) {
   .Call("rmark_node_is_block", x)
 }
 
-#' @rdname md_node
+#' @rdname md_is
 #' @export
 md_is_inline <- function(x) {
   .Call("rmark_node_is_inline", x)
 }
 
-#' @rdname md_node
+#' @rdname md_is
 #' @export
 md_is_leaf <- function(x) {
   .Call("rmark_node_is_leaf", x)
+}
+
+
+#' Tree Traversal
+#' @param x A markdown node.
+#' @name md_traversal
+NULL
+
+#' @rdname md_traversal
+#' @export
+md_next <- function(x) {
+  # TODO: When does this not return NULL?
+  .Call("rmark_node_next", x)
+}
+
+#' @rdname md_traversal
+#' @export
+md_previous <- function(x) {
+  # TODO: When does this not return NULL?
+  .Call("rmark_node_previous", x)
+}
+
+#' @rdname md_traversal
+#' @export
+md_parent <- function(x) {
+  # TODO: Is everything fucked if we create a new external pointer to the root?
+  .Call("rmark_node_parent", x)
+}
+
+#' @rdname md_traversal
+#' @export
+md_first_child <- function(x) {
+  .Call("rmark_node_first_child", x)
+}
+
+#' @rdname md_traversal
+#' @export
+md_last_child <- function(x) {
+  .Call("rmark_node_last_child", x)
 }

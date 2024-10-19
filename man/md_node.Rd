@@ -3,24 +3,12 @@
 \name{md_node}
 \alias{md_node}
 \alias{md_type}
-\alias{md_first_child}
 \alias{md_literal}
-\alias{md_is_block}
-\alias{md_is_inline}
-\alias{md_is_leaf}
 \title{Markdown nodes}
 \usage{
 md_type(x)
 
-md_first_child(x)
-
 md_literal(x)
-
-md_is_block(x)
-
-md_is_inline(x)
-
-md_is_leaf(x)
 }
 \arguments{
 \item{x}{A markdown node.}

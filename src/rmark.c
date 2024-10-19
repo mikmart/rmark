@@ -77,9 +77,31 @@ SEXP rmark_node_type(SEXP x) {
     return Rf_mkString(cmark_node_get_type_string(NODE(x)));
 }
 
+// FIXME: Assign parents properly for all traversal nodes.
+
+SEXP rmark_node_next(SEXP x) {
+    cmark_node *node = cmark_node_next(NODE(x));
+    return (node) ? make_r_node(node, x) : R_NilValue;
+}
+
+SEXP rmark_node_previous(SEXP x) {
+    cmark_node *node = cmark_node_previous(NODE(x));
+    return (node) ? make_r_node(node, x) : R_NilValue;
+}
+
+SEXP rmark_node_parent(SEXP x) {
+    cmark_node *node = cmark_node_parent(NODE(x));
+    return (node) ? make_r_node(node, x) : R_NilValue;
+}
+
 SEXP rmark_node_first_child(SEXP x) {
-    cmark_node *child = cmark_node_first_child(NODE(x));
-    return (child) ? make_r_node(child, x) : R_NilValue;
+    cmark_node *node = cmark_node_first_child(NODE(x));
+    return (node) ? make_r_node(node, x) : R_NilValue;
+}
+
+SEXP rmark_node_last_child(SEXP x) {
+    cmark_node *node = cmark_node_last_child(NODE(x));
+    return (node) ? make_r_node(node, x) : R_NilValue;
 }
 
 SEXP rmark_node_get_literal(SEXP x) {
