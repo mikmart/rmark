@@ -209,6 +209,32 @@ SEXP rmark_node_set_list_type(SEXP x, SEXP value) {
     return x;
 }
 
+SEXP rmark_node_get_list_delim(SEXP x) {
+    cmark_delim_type list_delim = cmark_node_get_list_delim(NODE(x));
+    return Rf_ScalarInteger((list_delim) ? list_delim : NA_INTEGER);
+}
+
+SEXP rmark_node_set_list_delim(SEXP x, SEXP value) {
+    cmark_delim_type list_delim = INTEGER(value)[0];
+    if (!cmark_node_set_list_delim(NODE(x), list_delim)) {
+        Rf_error("Failed to set list delim to \"%d\".", list_delim);
+    };
+    return x;
+}
+
+SEXP rmark_node_get_list_start(SEXP x) {
+    int list_start = cmark_node_get_list_start(NODE(x));
+    return Rf_ScalarInteger((list_start) ? list_start : NA_INTEGER);
+}
+
+SEXP rmark_node_set_list_start(SEXP x, SEXP value) {
+    int list_start = INTEGER(value)[0];
+    if (!cmark_node_set_list_start(NODE(x), list_start)) {
+        Rf_error("Failed to set list start to \"%d\".", list_start);
+    };
+    return x;
+}
+
 SEXP rmark_read_md(SEXP x) {
     static_assert(R_CONNECTIONS_VERSION == 1);
     Rconnection conn = R_GetConnection(x);

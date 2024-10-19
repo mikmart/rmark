@@ -50,3 +50,24 @@ try(md_list_type(list_node) <- "foo")
 
 md_list_type(text_node)
 try(md_list_type(text_node) <- "bullet")
+
+# Acecssing list delim.
+list_node <- md_first_child(parse_md("* Hello"))
+md_list_delim(list_node)
+md_list_type(list_node) <- "ordered"
+md_list_delim(list_node)
+md_list_delim(list_node) <- "paren"
+md_list_delim(list_node)
+render_md(list_node)
+
+list_node <- md_first_child(parse_md("* Hello"))
+md_list_delim(list_node) <- "paren"
+md_list_type(list_node) <- "ordered"
+render_md(list_node)
+
+# Accessing list start.
+list_node <- md_first_child(parse_md("1. Hello"))
+md_list_start(list_node)
+md_list_start(list_node) <- 2
+md_list_start(list_node)
+render_md(list_node)

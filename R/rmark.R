@@ -171,7 +171,39 @@ md_list_type <- function(x) {
 }
 
 MD_LIST_TYPES <- c("bullet", "ordered")
-MD_DELIM_TYPES <- c("period", "paren")
+
+#' @rdname md_node
+#' @export
+md_list_delim <- function(x) {
+  MD_LIST_DELIMS[.Call("rmark_node_get_list_delim", x)]
+}
+
+#' @rdname md_node
+#' @export
+`md_list_delim<-` <- function(x, value) {
+  stopifnot(length(value) == 1)
+  value <- match.arg(value, MD_LIST_DELIMS)
+  if (md_type(x) != "list")
+    stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
+  .Call("rmark_node_set_list_delim", x, match(value, MD_LIST_DELIMS))
+}
+
+MD_LIST_DELIMS <- c("period", "paren")
+
+#' @rdname md_node
+#' @export
+md_list_start <- function(x) {
+  .Call("rmark_node_get_list_start", x)
+}
+
+#' @rdname md_node
+#' @export
+`md_list_start<-` <- function(x, value) {
+  stopifnot(length(value) == 1)
+  if (md_type(x) != "list")
+    stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
+  .Call("rmark_node_set_list_start", x, as.integer(value))
+}
 
 #' @export
 print.rmark_node <- function(x, ...) {

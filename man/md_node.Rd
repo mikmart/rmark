@@ -9,6 +9,10 @@
 \alias{md_heading_level<-}
 \alias{md_list_type}
 \alias{md_list_type<-}
+\alias{md_list_delim}
+\alias{md_list_delim<-}
+\alias{md_list_start}
+\alias{md_list_start<-}
 \title{Accessors}
 \usage{
 md_type(x)
@@ -24,6 +28,14 @@ md_heading_level(x) <- value
 md_list_type(x)
 
 md_list_type(x) <- value
+
+md_list_delim(x)
+
+md_list_delim(x) <- value
+
+md_list_start(x)
+
+md_list_start(x) <- value
 }
 \arguments{
 \item{x}{A markdown node.}
