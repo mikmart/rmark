@@ -1,6 +1,44 @@
+describe("md_literal()", {
+  heading_node <- md_first_child(parse_md("# Hello"))
+  text_node <- md_first_child(heading_node)
+  it("matches source", {
+    expect_equal(md_literal(text_node), "Hello")
+  })
+  it("can be set", {
+    md_literal(text_node) <- "World"
+    expect_equal(md_literal(text_node), "World")
+    expect_error(md_literal(text_node) <- NA)
+  })
+  it("signals useful errors", {
+    expect_snapshot(md_literal(heading_node) <- "Hello", error = TRUE)
+  })
+  it("is missing for inapplicable nodes", {
+    expect_equal(md_literal(heading_node), NA_character_)
+  })
+})
+
+describe("md_heading_level()", {
+  heading_node <- md_first_child(parse_md("# Hello"))
+  text_node <- md_first_child(heading_node)
+  it("matches source", {
+    expect_equal(md_heading_level(heading_node), 1)
+  })
+  it("can be set", {
+    md_heading_level(heading_node) <- 2
+    expect_equal(md_heading_level(heading_node), 2)
+    expect_error(md_heading_level(heading_node) <- NA)
+  })
+  it("signals useful errors", {
+    expect_snapshot(md_heading_level(text_node) <- 1, error = TRUE)
+  })
+  it("is missing for inapplicable nodes", {
+    expect_equal(md_heading_level(text_node), NA_integer_)
+  })
+})
+
 describe("list type", {
   list_node <- md_first_child(parse_md("* Hello"))
-  it("matches text content", {
+  it("matches source", {
     expect_equal(md_list_type(list_node), "bullet")
   })
   it("can be set", {
@@ -16,7 +54,7 @@ describe("list type", {
 
 describe("list delim", {
   list_node <- md_first_child(parse_md("1. Hello"))
-  it("matches text content", {
+  it("matches source", {
     expect_equal(md_list_delim(list_node), "period")
   })
   it("can be set", {
@@ -32,7 +70,7 @@ describe("list delim", {
 
 describe("list start", {
   list_node <- md_first_child(parse_md("1. Hello"))
-  it("matches text content", {
+  it("matches source", {
     expect_equal(md_list_start(list_node), 1)
   })
   it("can be set", {
@@ -48,7 +86,7 @@ describe("list start", {
 
 describe("list tight", {
   list_node <- md_first_child(parse_md("1. Hello"))
-  it("matches text content", {
+  it("matches source", {
     expect_equal(md_list_tight(list_node), TRUE)
   })
   it("can be set", {

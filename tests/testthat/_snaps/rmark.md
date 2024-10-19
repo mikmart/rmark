@@ -1,3 +1,19 @@
+# md_literal(): signals useful errors
+
+    Code
+      md_literal(heading_node) <- "Hello"
+    Condition
+      Error in `md_literal<-`:
+      ! `x` must be a leaf node, not a node of type <heading>.
+
+# md_heading_level(): signals useful errors
+
+    Code
+      md_heading_level(text_node) <- 1
+    Condition
+      Error in `md_heading_level<-`:
+      ! `x` must be a heading node, not a node of type <text>.
+
 # list type: signals useful errors
 
     Code

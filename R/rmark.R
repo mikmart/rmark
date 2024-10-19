@@ -129,6 +129,7 @@ md_type <- function(x) {
 md_literal <- function(x) {
   .Call("rmark_node_get_literal", x)
 }
+
 #' @param value A string.
 #' @rdname md_node
 #' @export
