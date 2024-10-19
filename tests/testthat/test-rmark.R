@@ -17,6 +17,7 @@ describe("md_literal()", {
   })
 })
 
+
 describe("md_heading_level()", {
   heading_node <- md_first_child(parse_md("# Hello"))
   text_node <- md_first_child(heading_node)
@@ -36,7 +37,8 @@ describe("md_heading_level()", {
   })
 })
 
-describe("list type", {
+
+describe("md_list_type()", {
   list_node <- md_first_child(parse_md("* Hello"))
   it("matches source", {
     expect_equal(md_list_type(list_node), "bullet")
@@ -52,7 +54,8 @@ describe("list type", {
   })
 })
 
-describe("list delim", {
+
+describe("md_list_delim()", {
   list_node <- md_first_child(parse_md("1. Hello"))
   it("matches source", {
     expect_equal(md_list_delim(list_node), "period")
@@ -68,7 +71,8 @@ describe("list delim", {
   })
 })
 
-describe("list start", {
+
+describe("md_list_start()", {
   list_node <- md_first_child(parse_md("1. Hello"))
   it("matches source", {
     expect_equal(md_list_start(list_node), 1)
@@ -84,7 +88,8 @@ describe("list start", {
   })
 })
 
-describe("list tight", {
+
+describe("md_list_tight()", {
   list_node <- md_first_child(parse_md("1. Hello"))
   it("matches source", {
     expect_equal(md_list_tight(list_node), TRUE)

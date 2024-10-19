@@ -14,7 +14,7 @@
       Error in `md_heading_level<-`:
       ! `x` must be a heading node, not a node of type <text>.
 
-# list type: signals useful errors
+# md_list_type(): signals useful errors
 
     Code
       md_list_type(text_node) <- "bullet"
@@ -30,7 +30,7 @@
       Error in `match.arg()`:
       ! 'arg' should be one of "bullet", "ordered"
 
-# list delim: signals useful errors
+# md_list_delim(): signals useful errors
 
     Code
       md_list_delim(text_node) <- "period"
@@ -46,7 +46,7 @@
       Error in `match.arg()`:
       ! 'arg' should be one of "period", "paren"
 
-# list start: signals useful errors
+# md_list_start(): signals useful errors
 
     Code
       md_list_start(text_node) <- "bullet"
