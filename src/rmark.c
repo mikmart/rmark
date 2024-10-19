@@ -4,6 +4,7 @@
 
 #include <cmark.h>
 
+#include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include <R_ext/Connections.h>
@@ -177,7 +178,20 @@ SEXP rmark_node_get_literal(SEXP x) {
 SEXP rmark_node_set_literal(SEXP x, SEXP value) {
     const char *content = Rf_translateCharUTF8(STRING_ELT(value, 0));
     if (!cmark_node_set_literal(NODE(x), content)) {
-        Rf_error("Could not set node literal to \"%s\".", content);
+        Rf_error("Failed to set node literal to \"%s\".", content);
+    };
+    return x;
+}
+
+SEXP rmark_node_get_heading_level(SEXP x) {
+    int heading_level = cmark_node_get_heading_level(NODE(x));
+    return Rf_ScalarInteger((heading_level) ? heading_level : NA_INTEGER);
+}
+
+SEXP rmark_node_set_heading_level(SEXP x, SEXP value) {
+    int heading_level = INTEGER(value)[0];
+    if (!cmark_node_set_heading_level(NODE(x), heading_level)) {
+        Rf_error("Failed to set heading level to \"%d\".", heading_level);
     };
     return x;
 }

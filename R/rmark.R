@@ -129,14 +129,29 @@ md_type <- function(x) {
 md_literal <- function(x) {
   .Call("rmark_node_get_literal", x)
 }
-
 #' @param value A string.
 #' @rdname md_node
 #' @export
 `md_literal<-` <- function(x, value) {
-  # TODO: Is there a meaningful use for length > 1?
   stopifnot(length(value) == 1)
+  if (!md_is_leaf(x))
+    stop("`x` must be a leaf node, not a node of type <", md_type(x), ">.")
   .Call("rmark_node_set_literal", x, as.character(value))
+}
+
+#' @rdname md_node
+#' @export
+md_heading_level <- function(x) {
+  .Call("rmark_node_get_heading_level", x)
+}
+
+#' @rdname md_node
+#' @export
+`md_heading_level<-` <- function(x, value) {
+  stopifnot(length(value) == 1)
+  if (md_type(x) != "heading")
+    stop("`x` must be a heading, not a node of type <", md_type(x), ">.")
+  .Call("rmark_node_set_heading_level", x, as.integer(value))
 }
 
 #' @export
