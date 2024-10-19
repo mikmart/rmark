@@ -381,9 +381,39 @@ SEXP rmark_parse_md(SEXP x) {
 
 /** Rendering */
 
-SEXP rmark_render_md(SEXP x, SEXP width) {
+typedef enum {
+    RMARK_OUTPUT_NONE,
+    RMARK_OUTPUT_COMMONMARK,
+    RMARK_OUTPUT_HTML,
+    RMARK_OUTPUT_LATEX,
+    RMARK_OUTPUT_MAN,
+    RMARK_OUTPUT_XML,
+} rmark_output_format;
+
+char *rmark_cmark_render(cmark_node *root, int options, int width, rmark_output_format format) {
+    switch (format) {
+        case RMARK_OUTPUT_NONE:
+            return NULL;
+        case RMARK_OUTPUT_COMMONMARK:
+            return cmark_render_commonmark(root, options, width);
+        case RMARK_OUTPUT_HTML:
+            return cmark_render_html(root, options);
+        case RMARK_OUTPUT_LATEX:
+            return cmark_render_latex(root, options, width);
+        case RMARK_OUTPUT_MAN:
+            return cmark_render_man(root, options, width);
+        case RMARK_OUTPUT_XML:
+            return cmark_render_xml(root, options);
+    }
+    return NULL;
+}
+
+SEXP rmark_render(SEXP x, SEXP output_format, SEXP width) {
     int options = CMARK_OPT_DEFAULT;
-    char *output = cmark_render_commonmark(NODE(x), options, INTEGER(width)[0]);
+    char *output = rmark_cmark_render(NODE(x), options, INTEGER(width)[0], INTEGER(output_format)[0]);
+    if (!output) {
+        Rf_error("Failed to render document.");
+    }
     SEXP result = PROTECT(Rf_mkStringUTF8(output));
     free(output);
     UNPROTECT(1);

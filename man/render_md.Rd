@@ -4,12 +4,14 @@
 \alias{render_md}
 \title{Render Markdown}
 \usage{
-render_md(x, width = getOption("width"))
+render_md(x, format = "commonmark", width = getOption("width"))
 }
 \arguments{
 \item{x}{A markdown node.}
 
-\item{width}{An integer specifying the maximum line width of the output text.}
+\item{format}{A string.}
+
+\item{width}{An integer.}
 }
 \description{
 Render Markdown

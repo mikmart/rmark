@@ -28,12 +28,15 @@ parse_md <- function(x) {
 
 #' Render Markdown
 #' @param x A markdown node.
-#' @param width An integer specifying the maximum line width of the output text.
+#' @param format A string.
+#' @param width An integer.
 #' @export
-render_md <- function(x, width = getOption("width")) {
-  .Call("rmark_render_md", x, as.integer(width))
+render_md <- function(x, format = "commonmark", width = getOption("width")) {
+  format <- match.arg(format, CMARK_OUTPUT_FORMATS)
+  .Call("rmark_render", x, match(format, CMARK_OUTPUT_FORMATS), as.integer(width))
 }
 
+CMARK_OUTPUT_FORMATS <- c("commonmark", "html", "latex", "man", "xml")
 
 #' Classification
 #' @param x A markdown node.
