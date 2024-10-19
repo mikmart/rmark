@@ -34,34 +34,6 @@ render_md <- function(x, width = getOption("width")) {
   .Call("rmark_render_md", x, as.integer(width))
 }
 
-#' Markdown nodes
-#' @param x A markdown node.
-#' @name md_node
-NULL
-
-#' @export
-print.rmark_node <- function(x, ...) {
-  cat(format(x, ...))
-  invisible(x)
-}
-
-#' @export
-format.rmark_node <- function(x, ...) {
-  paste("<md_node<", md_type(x), ">>\n", sep = "")
-}
-
-#' @rdname md_node
-#' @export
-md_type <- function(x) {
-  .Call("rmark_node_type", x)
-}
-
-#' @rdname md_node
-#' @export
-md_literal <- function(x) {
-  .Call("rmark_node_get_literal", x)
-}
-
 
 #' Classification
 #' @param x A markdown node.
@@ -125,6 +97,7 @@ md_last_child <- function(x) {
   .Call("rmark_node_last_child", x)
 }
 
+
 #' Iteration
 #' @param x A markdown node.
 #' @param callback A function.
@@ -137,4 +110,42 @@ md_last_child <- function(x) {
 #' @export
 md_iterate <- function(x, callback) {
   invisible(.Call("rmark_iterate", x, callback, parent.frame()))
+}
+
+
+#' Accessors
+#' @param x A markdown node.
+#' @name md_node
+NULL
+
+#' @rdname md_node
+#' @export
+md_type <- function(x) {
+  .Call("rmark_node_get_type_string", x)
+}
+
+#' @rdname md_node
+#' @export
+md_literal <- function(x) {
+  .Call("rmark_node_get_literal", x)
+}
+
+#' @param value A string.
+#' @rdname md_node
+#' @export
+`md_literal<-` <- function(x, value) {
+  # TODO: Is there a meaningful use for length > 1?
+  stopifnot(length(value) == 1)
+  .Call("rmark_node_set_literal", x, as.character(value))
+}
+
+#' @export
+print.rmark_node <- function(x, ...) {
+  cat(format(x, ...))
+  invisible(x)
+}
+
+#' @export
+format.rmark_node <- function(x, ...) {
+  paste("<md_node<", md_type(x), ">>\n", sep = "")
 }

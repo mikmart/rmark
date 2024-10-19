@@ -19,3 +19,8 @@ md_first_child(text_node)
 md_is_block(text_node)
 md_is_inline(text_node)
 md_is_leaf(text_node)
+
+# Setting literal values.
+md_literal(text_node)
+md_literal(text_node) <- "World"
+md_literal(text_node)

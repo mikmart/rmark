@@ -10,18 +10,25 @@
 
 SEXP rmark_node_symbol; // Initialised on package load.
 
-#define NODE(x) rmark_node_get_cmark_node(x)
+#define STOPIFNOT(x) \
+    do { if (!(x)) Rf_error("Internal error: "#x" is not true."); } while (0)
+#define CHECK_TYPEOF(x, type) STOPIFNOT(TYPEOF(x) == (type))
 
-#define CHECK_RMARK_EXTPR(x)                                                                       \
-    do {                                                                                           \
-    if (TYPEOF(x) != EXTPTRSXP || R_ExternalPtrTag(x) != rmark_node_symbol) {                      \
-        Rf_error("Expected `" #x "` to be an external pointer, got %s.", Rf_type2char(TYPEOF(x))); \
-    }                                                                                              \
-    } while(0)
+#define Rf_mkStringUTF8(x) rmark_make_utf8_strsxp(x)
+
+SEXP rmark_make_utf8_strsxp(const char *string) {
+    SEXP charsxp = Rf_mkCharCE(string, CE_UTF8);
+    PROTECT(charsxp);
+    SEXP strsxp = Rf_ScalarString(charsxp);
+    UNPROTECT(1);
+    return strsxp;
+}
+
+#define NODE(x) rmark_node_get_cmark_node(x)
 
 cmark_node *rmark_node_get_cmark_node(SEXP x) {
     x = Rf_getAttrib(x, Rf_install("ptr"));
-    CHECK_RMARK_EXTPR(x);
+    CHECK_TYPEOF(x, EXTPTRSXP);
     cmark_node *node = R_ExternalPtrAddr(x);
     if (!node) {
         Rf_error("External pointer is invalid.");
@@ -30,7 +37,7 @@ cmark_node *rmark_node_get_cmark_node(SEXP x) {
 }
 
 void rmark_finalize_root_node_ptr(SEXP x) {
-    CHECK_RMARK_EXTPR(x);
+    CHECK_TYPEOF(x, EXTPTRSXP);
     cmark_node *node = R_ExternalPtrAddr(x);
     if (node) {
         cmark_node_free(node);
@@ -51,7 +58,7 @@ SEXP make_r_node(cmark_node *node, SEXP parent) {
     if (!Rf_isNull(parent)) {
         // Keep a reference to the parent pointer to stop it from being collected early.
         SEXP parent_ptr = Rf_getAttrib(parent, Rf_install("ptr"));
-        CHECK_RMARK_EXTPR(parent_ptr);
+        CHECK_TYPEOF(parent_ptr, EXTPTRSXP);
         Rf_setAttrib(out, Rf_install("parent"), parent_ptr);
     }
 
@@ -60,10 +67,6 @@ SEXP make_r_node(cmark_node *node, SEXP parent) {
 }
 
 #define make_root_r_node(x) make_r_node(x, R_NilValue)
-
-SEXP rmark_node_type(SEXP x) {
-    return Rf_mkString(cmark_node_get_type_string(NODE(x)));
-}
 
 /** Classification */
 
@@ -112,15 +115,6 @@ SEXP rmark_node_last_child(SEXP x) {
 
 // TODO: Expose full iterator API to R?
 
-#define CHECK_TYPEOF(x, type)                                  \
-    do {                                                       \
-    if (TYPEOF(x) != type) {                                   \
-        const char *expected = Rf_type2char(type);             \
-        const char *actual = Rf_type2char(TYPEOF(x));          \
-        Rf_error("Expected <%s> got <%s>.", expected, actual); \
-    }                                                          \
-    } while (0)
-
 void rmark_iter_free(SEXP x) {
     CHECK_TYPEOF(x, EXTPTRSXP);
     cmark_iter *iter = R_ExternalPtrAddr(x);
@@ -167,9 +161,25 @@ SEXP rmark_iterate(SEXP x, SEXP callback, SEXP envir) {
     return R_NilValue;
 }
 
+/** Accessors */
+
+// User data is not supported; We already have attributes in R.
+
+SEXP rmark_node_get_type_string(SEXP x) {
+    return Rf_mkStringUTF8(cmark_node_get_type_string(NODE(x)));
+}
+
 SEXP rmark_node_get_literal(SEXP x) {
     const char *content = cmark_node_get_literal(NODE(x));
-    return (content) ? Rf_mkString(content) : Rf_ScalarString(NA_STRING);
+    return (content) ? Rf_mkStringUTF8(content) : Rf_ScalarString(NA_STRING);
+}
+
+SEXP rmark_node_set_literal(SEXP x, SEXP value) {
+    const char *content = Rf_translateCharUTF8(STRING_ELT(value, 0));
+    if (!cmark_node_set_literal(NODE(x), content)) {
+        Rf_error("Could not set node literal to \"%s\".", content);
+    };
+    return x;
 }
 
 SEXP rmark_read_md(SEXP x) {
@@ -199,7 +209,7 @@ SEXP rmark_parse_md(SEXP x) {
 SEXP rmark_render_md(SEXP x, SEXP width) {
     int options = CMARK_OPT_DEFAULT;
     char *output = cmark_render_commonmark(NODE(x), options, INTEGER(width)[0]);
-    SEXP result = PROTECT(Rf_mkString(output));
+    SEXP result = PROTECT(Rf_mkStringUTF8(output));
     free(output);
     UNPROTECT(1);
     return result;

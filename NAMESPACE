@@ -2,6 +2,7 @@
 
 S3method(format,rmark_node)
 S3method(print,rmark_node)
+export("md_literal<-")
 export(md_first_child)
 export(md_is_block)
 export(md_is_inline)

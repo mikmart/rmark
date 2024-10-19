@@ -4,15 +4,20 @@
 \alias{md_node}
 \alias{md_type}
 \alias{md_literal}
-\title{Markdown nodes}
+\alias{md_literal<-}
+\title{Accessors}
 \usage{
 md_type(x)
 
 md_literal(x)
+
+md_literal(x) <- value
 }
 \arguments{
 \item{x}{A markdown node.}
+
+\item{value}{A string.}
 }
 \description{
-Markdown nodes
+Accessors
 }
