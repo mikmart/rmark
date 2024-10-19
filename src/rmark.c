@@ -331,7 +331,7 @@ SEXP rmark_read_md(SEXP x) {
     R_RegisterCFinalizer(ptr, &rmark_finalize_parser_ptr);
 
     size_t bytes_read = 0;
-    char buf[BUFSIZ] = {0};
+    char *buf = R_alloc(BUFSIZ, sizeof(char));
     while ((bytes_read = R_ReadConnection(conn, buf, BUFSIZ))) {
         R_CheckUserInterrupt();
         cmark_parser_feed(parser, buf, bytes_read);
