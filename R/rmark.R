@@ -133,9 +133,9 @@ md_literal <- function(x) {
 #' @rdname md_node
 #' @export
 `md_literal<-` <- function(x, value) {
-  stopifnot(length(value) == 1)
   if (!md_is_leaf(x))
     stop("`x` must be a leaf node, not a node of type <", md_type(x), ">.")
+  stopifnot(length(value) == 1 && !is.na(value))
   .Call("rmark_node_set_literal", x, as.character(value))
 }
 
@@ -150,7 +150,7 @@ md_heading_level <- function(x) {
 `md_heading_level<-` <- function(x, value) {
   if (md_type(x) != "heading")
     stop("`x` must be a heading node, not a node of type <", md_type(x), ">.")
-  stopifnot(length(value) == 1)
+  stopifnot(length(value) == 1 && !is.na(value))
   .Call("rmark_node_set_heading_level", x, as.integer(value))
 }
 
@@ -201,8 +201,23 @@ md_list_start <- function(x) {
 `md_list_start<-` <- function(x, value) {
   if (md_type(x) != "list")
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
-  stopifnot(length(value) == 1)
+  stopifnot(length(value) == 1 && !is.na(value))
   .Call("rmark_node_set_list_start", x, as.integer(value))
+}
+
+#' @rdname md_node
+#' @export
+md_list_tight <- function(x) {
+  .Call("rmark_node_get_list_tight", x)
+}
+
+#' @rdname md_node
+#' @export
+`md_list_tight<-` <- function(x, value) {
+  if (md_type(x) != "list")
+    stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
+  stopifnot(length(value) == 1 && !is.na(value))
+  .Call("rmark_node_set_list_tight", x, as.logical(value))
 }
 
 #' @export

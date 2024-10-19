@@ -13,6 +13,8 @@
 \alias{md_list_delim<-}
 \alias{md_list_start}
 \alias{md_list_start<-}
+\alias{md_list_tight}
+\alias{md_list_tight<-}
 \title{Accessors}
 \usage{
 md_type(x)
@@ -36,6 +38,10 @@ md_list_delim(x) <- value
 md_list_start(x)
 
 md_list_start(x) <- value
+
+md_list_tight(x)
+
+md_list_tight(x) <- value
 }
 \arguments{
 \item{x}{A markdown node.}

@@ -235,6 +235,19 @@ SEXP rmark_node_set_list_start(SEXP x, SEXP value) {
     return x;
 }
 
+SEXP rmark_node_get_list_tight(SEXP x) {
+    int list_tight = cmark_node_get_list_tight(NODE(x));
+    return Rf_ScalarLogical(list_tight);
+}
+
+SEXP rmark_node_set_list_tight(SEXP x, SEXP value) {
+    int list_tight = LOGICAL(value)[0];
+    if (!cmark_node_set_list_tight(NODE(x), list_tight)) {
+        Rf_error("Failed to set list tight to \"%d\".", list_tight);
+    };
+    return x;
+}
+
 SEXP rmark_read_md(SEXP x) {
     static_assert(R_CONNECTIONS_VERSION == 1);
     Rconnection conn = R_GetConnection(x);

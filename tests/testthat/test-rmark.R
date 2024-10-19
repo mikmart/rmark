@@ -38,9 +38,26 @@ describe("list start", {
   it("can be set", {
     md_list_start(list_node) <- 2
     expect_equal(md_list_start(list_node), 2)
+    expect_error(md_list_start(list_node) <- NA)
   })
   it("signals useful errors", {
     text_node <- md_first_child(list_node)
     expect_snapshot(md_list_start(text_node) <- "bullet", error = TRUE)
+  })
+})
+
+describe("list tight", {
+  list_node <- md_first_child(parse_md("1. Hello"))
+  it("matches text content", {
+    expect_equal(md_list_tight(list_node), TRUE)
+  })
+  it("can be set", {
+    md_list_tight(list_node) <- FALSE
+    expect_equal(md_list_tight(list_node), FALSE)
+    expect_error(md_list_tight(list_node) <- NA)
+  })
+  it("signals useful errors", {
+    text_node <- md_first_child(list_node)
+    expect_error(md_list_tight(text_node) <- TRUE)
   })
 })
