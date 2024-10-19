@@ -8,6 +8,7 @@
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include <R_ext/Connections.h>
+static_assert(R_CONNECTIONS_VERSION == 1);
 
 SEXP rmark_node_symbol; // Initialised on package load.
 
@@ -116,15 +117,6 @@ SEXP rmark_node_last_child(SEXP x) {
 
 // TODO: Expose full iterator API to R?
 
-void rmark_iter_free(SEXP x) {
-    CHECK_TYPEOF(x, EXTPTRSXP);
-    cmark_iter *iter = R_ExternalPtrAddr(x);
-    if (iter) {
-        cmark_iter_free(iter);
-        R_ClearExternalPtr(x);
-    }
-}
-
 const char *rmark_cmark_event_type_string(cmark_event_type event) {
     switch (event) {
         case CMARK_EVENT_NONE:  return "none";
@@ -133,6 +125,15 @@ const char *rmark_cmark_event_type_string(cmark_event_type event) {
         case CMARK_EVENT_DONE:  return "done";
     }
     return "";
+}
+
+void rmark_finalize_iter_ptr(SEXP x) {
+    CHECK_TYPEOF(x, EXTPTRSXP);
+    cmark_iter *iter = R_ExternalPtrAddr(x);
+    if (iter) {
+        cmark_iter_free(iter);
+        R_ClearExternalPtr(x);
+    }
 }
 
 SEXP rmark_iterate(SEXP x, SEXP callback, SEXP envir) {
@@ -146,7 +147,7 @@ SEXP rmark_iterate(SEXP x, SEXP callback, SEXP envir) {
 
     // Make sure iterator gets released even if R code errors.
     SEXP ptr = PROTECT(R_MakeExternalPtr(iter, R_NilValue, R_NilValue));
-    R_RegisterCFinalizer(ptr, &rmark_iter_free);
+    R_RegisterCFinalizer(ptr, &rmark_finalize_iter_ptr);
 
     while ((event = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
         const char *event_string = rmark_cmark_event_type_string(event);
@@ -308,20 +309,35 @@ SEXP rmark_node_get_end_column(SEXP x) {
 
 /** Tree Manipulation */
 
+/** Parsing */
+
+void rmark_finalize_parser_ptr(SEXP x) {
+    CHECK_TYPEOF(x, EXTPTRSXP);
+    cmark_parser *parser = R_ExternalPtrAddr(x);
+    if (parser) {
+        cmark_parser_free(parser);
+        R_ClearExternalPtr(x);
+    }
+}
+
 SEXP rmark_read_md(SEXP x) {
-    static_assert(R_CONNECTIONS_VERSION == 1);
+    int options = CMARK_OPT_DEFAULT;
     Rconnection conn = R_GetConnection(x);
+    cmark_parser *parser = cmark_parser_new(options);
+
+    // Make sure parser is free'd if there's an error reading from the connection.
+    SEXP ptr = PROTECT(R_MakeExternalPtr(parser, R_NilValue, R_NilValue));
+    R_RegisterCFinalizer(ptr, &rmark_finalize_parser_ptr);
+
     size_t bytes_read = 0;
     char buf[BUFSIZ] = {0};
-
-    int options = CMARK_OPT_DEFAULT;
-    cmark_parser *parser = cmark_parser_new(options);
     while ((bytes_read = R_ReadConnection(conn, buf, BUFSIZ))) {
+        R_CheckUserInterrupt();
         cmark_parser_feed(parser, buf, bytes_read);
     }
     cmark_node *root = cmark_parser_finish(parser);
-    cmark_parser_free(parser);
 
+    UNPROTECT(1);
     return make_root_r_node(root);
 }
 
@@ -332,6 +348,8 @@ SEXP rmark_parse_md(SEXP x) {
     return make_root_r_node(root);
 }
 
+/** Rendering */
+
 SEXP rmark_render_md(SEXP x, SEXP width) {
     int options = CMARK_OPT_DEFAULT;
     char *output = cmark_render_commonmark(NODE(x), options, INTEGER(width)[0]);
@@ -340,6 +358,8 @@ SEXP rmark_render_md(SEXP x, SEXP width) {
     UNPROTECT(1);
     return result;
 }
+
+/** R Package Initialization */
 
 attribute_visible void R_init_rmark(DllInfo *dll_info) {
     rmark_node_symbol = Rf_install("rmark_node");
