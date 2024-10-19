@@ -61,6 +61,12 @@ SEXP make_r_node(cmark_node *node, SEXP parent) {
 
 #define make_root_r_node(x) make_r_node(x, R_NilValue)
 
+SEXP rmark_node_type(SEXP x) {
+    return Rf_mkString(cmark_node_get_type_string(NODE(x)));
+}
+
+/** Classification */
+
 SEXP rmark_node_is_block(SEXP x) {
     return Rf_ScalarLogical(cmark_node_is_block(NODE(x)));
 }
@@ -73,9 +79,7 @@ SEXP rmark_node_is_leaf(SEXP x) {
     return Rf_ScalarLogical(cmark_node_is_leaf(NODE(x)));
 }
 
-SEXP rmark_node_type(SEXP x) {
-    return Rf_mkString(cmark_node_get_type_string(NODE(x)));
-}
+/** Tree Traversal */
 
 // FIXME: Assign parents properly for all traversal nodes.
 
@@ -102,6 +106,65 @@ SEXP rmark_node_first_child(SEXP x) {
 SEXP rmark_node_last_child(SEXP x) {
     cmark_node *node = cmark_node_last_child(NODE(x));
     return (node) ? make_r_node(node, x) : R_NilValue;
+}
+
+/** Iteration */
+
+// TODO: Expose full iterator API to R?
+
+#define CHECK_TYPEOF(x, type)                                  \
+    do {                                                       \
+    if (TYPEOF(x) != type) {                                   \
+        const char *expected = Rf_type2char(type);             \
+        const char *actual = Rf_type2char(TYPEOF(x));          \
+        Rf_error("Expected <%s> got <%s>.", expected, actual); \
+    }                                                          \
+    } while (0)
+
+void rmark_iter_free(SEXP x) {
+    CHECK_TYPEOF(x, EXTPTRSXP);
+    cmark_iter *iter = R_ExternalPtrAddr(x);
+    if (iter) {
+        cmark_iter_free(iter);
+        R_ClearExternalPtr(x);
+    }
+}
+
+const char *rmark_cmark_event_type_string(cmark_event_type event) {
+    switch (event) {
+        case CMARK_EVENT_NONE:  return "none";
+        case CMARK_EVENT_ENTER: return "enter";
+        case CMARK_EVENT_EXIT:  return "exit";
+        case CMARK_EVENT_DONE:  return "done";
+    }
+    return "";
+}
+
+SEXP rmark_iterate(SEXP x, SEXP callback, SEXP envir) {
+    if (!Rf_isFunction(callback))
+        Rf_error("`callback` must be a function.");
+    if (!Rf_isEnvironment(envir))
+        Rf_error("`envir` must be an environment.");
+
+    cmark_iter *iter = cmark_iter_new(NODE(x));
+    cmark_event_type event = {0};
+
+    // Make sure iterator gets released even if R code errors.
+    SEXP ptr = PROTECT(R_MakeExternalPtr(iter, R_NilValue, R_NilValue));
+    R_RegisterCFinalizer(ptr, &rmark_iter_free);
+
+    while ((event = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
+        const char *event_string = rmark_cmark_event_type_string(event);
+        cmark_node *node = cmark_iter_get_node(iter);
+        SEXP r_node = PROTECT(make_r_node(node, x));
+        SEXP r_event = PROTECT(Rf_mkString(event_string));
+        SEXP r_call = PROTECT(Rf_lang3(callback, r_node, r_event));
+        Rf_eval(r_call, envir);
+        UNPROTECT(3);
+    }
+
+    UNPROTECT(1);
+    return R_NilValue;
 }
 
 SEXP rmark_node_get_literal(SEXP x) {

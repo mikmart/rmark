@@ -41,8 +41,13 @@ NULL
 
 #' @export
 print.rmark_node <- function(x, ...) {
-  cat("<md_node<", md_type(x), ">>\n", sep = "")
+  cat(format(x, ...))
   invisible(x)
+}
+
+#' @export
+format.rmark_node <- function(x, ...) {
+  paste("<md_node<", md_type(x), ">>\n", sep = "")
 }
 
 #' @rdname md_node
@@ -118,4 +123,18 @@ md_first_child <- function(x) {
 #' @export
 md_last_child <- function(x) {
   .Call("rmark_node_last_child", x)
+}
+
+#' Iteration
+#' @param x A markdown node.
+#' @param callback A function.
+#' @return `NULL`, invisibly.
+#' @examples
+#' root <- parse_md("# Hello")
+#' md_iterate(root, function(node, event) {
+#'   cat(event, "ing ", format(node), sep = "")
+#' })
+#' @export
+md_iterate <- function(x, callback) {
+  invisible(.Call("rmark_iterate", x, callback, parent.frame()))
 }
