@@ -359,6 +359,12 @@ SEXP rmark_render_md(SEXP x, SEXP width) {
     return result;
 }
 
+/** Version Info */
+
+SEXP rmark_cmark_version_string() {
+    return Rf_mkStringUTF8(cmark_version_string());
+}
+
 /** R Package Initialization */
 
 attribute_visible void R_init_rmark(DllInfo *dll_info) {
