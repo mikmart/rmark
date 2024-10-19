@@ -261,25 +261,31 @@ md_title <- function(x) {
   .Call("rmark_node_set_title", x, as.character(value))
 }
 
-#' @rdname md_node
+#' Location in Source Document
+#' @param x A markdown node.
+#' @return An integer.
+#' @name md_location
+NULL
+
+#' @rdname md_location
 #' @export
 md_start_line <- function(x) {
   .Call("rmark_node_get_start_line", x)
 }
 
-#' @rdname md_node
+#' @rdname md_location
 #' @export
 md_start_column <- function(x) {
   .Call("rmark_node_get_start_column", x)
 }
 
-#' @rdname md_node
+#' @rdname md_location
 #' @export
 md_end_line <- function(x) {
   .Call("rmark_node_get_end_line", x)
 }
 
-#' @rdname md_node
+#' @rdname md_location
 #' @export
 md_end_column <- function(x) {
   .Call("rmark_node_get_end_column", x)

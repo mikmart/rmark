@@ -21,10 +21,6 @@
 \alias{md_url<-}
 \alias{md_title}
 \alias{md_title<-}
-\alias{md_start_line}
-\alias{md_start_column}
-\alias{md_end_line}
-\alias{md_end_column}
 \title{Accessors}
 \usage{
 md_type(x)
@@ -64,14 +60,6 @@ md_url(x) <- value
 md_title(x)
 
 md_title(x) <- value
-
-md_start_line(x)
-
-md_start_column(x)
-
-md_end_line(x)
-
-md_end_column(x)
 }
 \arguments{
 \item{x}{A markdown node.}
