@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include <cmark.h>
 
@@ -8,7 +7,6 @@
 #include <Rinternals.h>
 #include <R_ext/Visibility.h>
 #include <R_ext/Connections.h>
-static_assert(R_CONNECTIONS_VERSION == 1);
 
 SEXP rmark_node_symbol; // Initialised on package load.
 
@@ -321,6 +319,9 @@ void rmark_finalize_parser_ptr(SEXP x) {
 }
 
 SEXP rmark_read_md(SEXP x) {
+#if R_CONNECTIONS_VERSION > 1
+    Rf_error("Package was built with an unsupported version of the R connections API.");
+#else
     int options = CMARK_OPT_DEFAULT;
     Rconnection conn = R_GetConnection(x);
     cmark_parser *parser = cmark_parser_new(options);
@@ -339,6 +340,7 @@ SEXP rmark_read_md(SEXP x) {
 
     UNPROTECT(1);
     return make_root_r_node(root);
+#endif // R_CONNECTIONS_VERSION
 }
 
 SEXP rmark_parse_md(SEXP x) {
