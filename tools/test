@@ -3,6 +3,23 @@ args <- commandArgs(trailingOnly = TRUE)
 if (length(args) == 0) {
   testthat::test_local()
 }
-if ("--watch" %in% args) {
-  testthat::auto_test_package()
+if (length(args) >= 1) {
+  if (args[1] == "watch") {
+    testthat::auto_test_package()
+  } else if (args[1] == "valgrind") {
+    args <- args[-1]
+    if (length(args) == 0) {
+      cat("Usage: ./tools/test valgrind <name> [<name>...]\n")
+      cat("ERROR: Expected name of test file.\n")
+      quit(status = 1)
+    }
+    for (arg in args) {
+      file_path <- file.path("tests", "valgrind", paste0("test-", arg, ".R"))
+      system2("R", c("--no-save", "-d", "valgrind", "-f", file_path))
+    }
+  } else {
+    cat("Usage: ./tools/test [watch|valgrind]\n")
+    cat("ERROR: Unknown subcommand: ", args[1], "\n", sep = "")
+    quit(status = 1)
+  }
 }
