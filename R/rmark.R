@@ -40,6 +40,12 @@ render_md <- function(x, width = getOption("width")) {
 #' @name md_is
 NULL
 
+#' @export
+#' @rdname md_is
+is_md <- function(x) {
+  inherits(x, "rmark_node")
+}
+
 #' @rdname md_is
 #' @export
 md_is_block <- function(x) {

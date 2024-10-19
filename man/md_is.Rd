@@ -2,11 +2,14 @@
 % Please edit documentation in R/rmark.R
 \name{md_is}
 \alias{md_is}
+\alias{is_md}
 \alias{md_is_block}
 \alias{md_is_inline}
 \alias{md_is_leaf}
 \title{Classification}
 \usage{
+is_md(x)
+
 md_is_block(x)
 
 md_is_inline(x)
