@@ -54,3 +54,11 @@
       Error in `md_list_start<-`:
       ! `x` must be a list node, not a node of type <item>.
 
+# md_list_tight(): signals useful errors
+
+    Code
+      md_list_tight(text_node) <- TRUE
+    Condition
+      Error in `md_list_tight<-`:
+      ! `x` must be a list node, not a node of type <item>.
+

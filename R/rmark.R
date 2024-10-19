@@ -209,6 +209,8 @@ md_list_start <- function(x) {
 #' @rdname md_node
 #' @export
 md_list_tight <- function(x) {
+  if (md_type(x) != "list")
+    return(NA) # C API does not communicate "inapplicable".
   .Call("rmark_node_get_list_tight", x)
 }
 
