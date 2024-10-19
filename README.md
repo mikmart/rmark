@@ -4,13 +4,24 @@ R bindings for the Commonmark C library [cmark](https://github.com/commonmark/cm
 
 ## Development
 
+Rebuild documentation, compile and install the package.
+
 ``` console
-./tools/document
-R CMD INSTALL .
+./tools/build
 ```
 
 ## Testing
 
+Run unit tests:
+
 ``` console
-R --vanilla -d valgrind < tests/test-rmark.R
+./tools/test
+```
+
+Run memory tests:
+
+``` console
+./tools/test valgrind finalization
+./tools/test valgrind iteration
+./tools/test valgrind read
 ```

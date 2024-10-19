@@ -320,7 +320,7 @@ void rmark_finalize_parser_ptr(SEXP x) {
 
 SEXP rmark_read_md(SEXP x) {
 #if R_CONNECTIONS_VERSION > 1
-    Rf_error("Package was built with an unsupported version of the R connections API.");
+    Rf_error("rmark was built with an unsupported version of the R connections API.");
 #else
     int options = CMARK_OPT_DEFAULT;
     Rconnection conn = R_GetConnection(x);
