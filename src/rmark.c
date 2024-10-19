@@ -24,32 +24,28 @@ SEXP rmark_make_utf8_strsxp(const char *string) {
     return strsxp;
 }
 
-#define NODE(x) rmark_node_get_cmark_node(x)
+#define VALIDPTR(x) rmark_get_valid_ptr(x)
 
-cmark_node *rmark_node_get_cmark_node(SEXP x) {
-    x = Rf_getAttrib(x, Rf_install("ptr"));
-    CHECK_TYPEOF(x, EXTPTRSXP);
-    cmark_node *node = R_ExternalPtrAddr(x);
-    if (!node) {
+void *rmark_get_valid_ptr(SEXP x) {
+    void *ptr = R_ExternalPtrAddr(x);
+    if (!ptr) {
         Rf_error("External pointer is invalid.");
     }
-    return node;
+    return ptr;
 }
 
-void rmark_finalize_root_node_ptr(SEXP x) {
-    CHECK_TYPEOF(x, EXTPTRSXP);
-    cmark_node *node = R_ExternalPtrAddr(x);
-    if (node) {
+#define NODE(x) ((cmark_node *)VALIDPTR(Rf_getAttrib(x, Rf_install("ptr"))))
+
+void rmark_finalize_node_ptr(SEXP x) {
+    cmark_node *node = VALIDPTR(x);
+    if (!cmark_node_parent(node)) {
         cmark_node_free(node);
-        R_ClearExternalPtr(x);
     }
 }
 
 SEXP make_r_node(cmark_node *node, SEXP parent) {
     SEXP ptr = PROTECT(R_MakeExternalPtr(node, rmark_node_symbol, R_NilValue));
-    if (Rf_isNull(parent)) {
-        R_RegisterCFinalizer(ptr, &rmark_finalize_root_node_ptr);
-    }
+    R_RegisterCFinalizer(ptr, &rmark_finalize_node_ptr);
 
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 0));
     Rf_setAttrib(out, R_ClassSymbol, Rf_mkString("rmark_node"));
@@ -126,12 +122,7 @@ const char *rmark_cmark_event_type_string(cmark_event_type event) {
 }
 
 void rmark_finalize_iter_ptr(SEXP x) {
-    CHECK_TYPEOF(x, EXTPTRSXP);
-    cmark_iter *iter = R_ExternalPtrAddr(x);
-    if (iter) {
-        cmark_iter_free(iter);
-        R_ClearExternalPtr(x);
-    }
+    cmark_iter_free(VALIDPTR(x));
 }
 
 SEXP rmark_iterate(SEXP x, SEXP callback, SEXP envir) {
@@ -310,12 +301,7 @@ SEXP rmark_node_get_end_column(SEXP x) {
 /** Parsing */
 
 void rmark_finalize_parser_ptr(SEXP x) {
-    CHECK_TYPEOF(x, EXTPTRSXP);
-    cmark_parser *parser = R_ExternalPtrAddr(x);
-    if (parser) {
-        cmark_parser_free(parser);
-        R_ClearExternalPtr(x);
-    }
+    cmark_parser_free(VALIDPTR(x));
 }
 
 SEXP rmark_read_md(SEXP x) {
