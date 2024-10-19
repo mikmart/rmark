@@ -1,0 +1,8 @@
+#!/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) == 0) {
+  testthat::test_local()
+}
+if ("--watch" %in% args) {
+  testthat::auto_test_package()
+}

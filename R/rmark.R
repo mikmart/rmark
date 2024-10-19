@@ -148,9 +148,9 @@ md_heading_level <- function(x) {
 #' @rdname md_node
 #' @export
 `md_heading_level<-` <- function(x, value) {
-  stopifnot(length(value) == 1)
   if (md_type(x) != "heading")
     stop("`x` must be a heading node, not a node of type <", md_type(x), ">.")
+  stopifnot(length(value) == 1)
   .Call("rmark_node_set_heading_level", x, as.integer(value))
 }
 
@@ -163,10 +163,10 @@ md_list_type <- function(x) {
 #' @rdname md_node
 #' @export
 `md_list_type<-` <- function(x, value) {
-  stopifnot(length(value) == 1)
-  value <- match.arg(value, MD_LIST_TYPES)
   if (md_type(x) != "list")
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
+  stopifnot(length(value) == 1)
+  value <- match.arg(value, MD_LIST_TYPES)
   .Call("rmark_node_set_list_type", x, match(value, MD_LIST_TYPES))
 }
 
@@ -181,10 +181,10 @@ md_list_delim <- function(x) {
 #' @rdname md_node
 #' @export
 `md_list_delim<-` <- function(x, value) {
-  stopifnot(length(value) == 1)
-  value <- match.arg(value, MD_LIST_DELIMS)
   if (md_type(x) != "list")
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
+  stopifnot(length(value) == 1)
+  value <- match.arg(value, MD_LIST_DELIMS)
   .Call("rmark_node_set_list_delim", x, match(value, MD_LIST_DELIMS))
 }
 
@@ -199,9 +199,9 @@ md_list_start <- function(x) {
 #' @rdname md_node
 #' @export
 `md_list_start<-` <- function(x, value) {
-  stopifnot(length(value) == 1)
   if (md_type(x) != "list")
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
+  stopifnot(length(value) == 1)
   .Call("rmark_node_set_list_start", x, as.integer(value))
 }
 
