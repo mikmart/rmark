@@ -61,39 +61,32 @@ SEXP make_r_node(cmark_node *node, SEXP parent) {
 
 #define make_root_r_node(x) make_r_node(x, R_NilValue)
 
-attribute_visible
 SEXP rmark_node_is_block(SEXP x) {
     return Rf_ScalarLogical(cmark_node_is_block(NODE(x)));
 }
 
-attribute_visible
 SEXP rmark_node_is_inline(SEXP x) {
     return Rf_ScalarLogical(cmark_node_is_inline(NODE(x)));
 }
 
-attribute_visible
 SEXP rmark_node_is_leaf(SEXP x) {
     return Rf_ScalarLogical(cmark_node_is_leaf(NODE(x)));
 }
 
-attribute_visible
 SEXP rmark_node_type(SEXP x) {
     return Rf_mkString(cmark_node_get_type_string(NODE(x)));
 }
 
-attribute_visible
 SEXP rmark_node_first_child(SEXP x) {
     cmark_node *child = cmark_node_first_child(NODE(x));
     return (child) ? make_r_node(child, x) : R_NilValue;
 }
 
-attribute_visible
 SEXP rmark_node_get_literal(SEXP x) {
     const char *content = cmark_node_get_literal(NODE(x));
     return (content) ? Rf_mkString(content) : Rf_ScalarString(NA_STRING);
 }
 
-attribute_visible
 SEXP rmark_read_md(SEXP x) {
     static_assert(R_CONNECTIONS_VERSION == 1);
     Rconnection conn = R_GetConnection(x);
@@ -111,7 +104,6 @@ SEXP rmark_read_md(SEXP x) {
     return make_root_r_node(root);
 }
 
-attribute_visible
 SEXP rmark_parse_md(SEXP x) {
     int options = CMARK_OPT_DEFAULT;
     const char *input = Rf_translateCharUTF8(STRING_ELT(x, 0));
@@ -119,7 +111,6 @@ SEXP rmark_parse_md(SEXP x) {
     return make_root_r_node(root);
 }
 
-attribute_visible
 SEXP rmark_render_md(SEXP x, SEXP width) {
     int options = CMARK_OPT_DEFAULT;
     char *output = cmark_render_commonmark(NODE(x), options, INTEGER(width)[0]);
@@ -129,7 +120,6 @@ SEXP rmark_render_md(SEXP x, SEXP width) {
     return result;
 }
 
-attribute_visible
-void R_init_rmark(DllInfo *dll_info) {
+attribute_visible void R_init_rmark(DllInfo *dll_info) {
     rmark_node_symbol = Rf_install("rmark_node");
 }

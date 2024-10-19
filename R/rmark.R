@@ -39,6 +39,12 @@ render_md <- function(x, width = getOption("width")) {
 #' @name md_node
 NULL
 
+#' @export
+print.rmark_node <- function(x, ...) {
+  cat("<md_node<", md_type(x), ">>\n", sep = "")
+  invisible(x)
+}
+
 #' @rdname md_node
 #' @export
 md_type <- function(x) {
@@ -55,12 +61,6 @@ md_first_child <- function(x) {
 #' @export
 md_literal <- function(x) {
   .Call("rmark_node_get_literal", x)
-}
-
-#' @export
-print.rmark_node <- function(x, ...) {
-  cat("<md_node<", md_type(x), ">>\n", sep = "")
-  invisible(x)
 }
 
 #' @rdname md_node
