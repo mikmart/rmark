@@ -7,6 +7,8 @@
 \alias{md_literal<-}
 \alias{md_heading_level}
 \alias{md_heading_level<-}
+\alias{md_list_type}
+\alias{md_list_type<-}
 \title{Accessors}
 \usage{
 md_type(x)
@@ -18,6 +20,10 @@ md_literal(x) <- value
 md_heading_level(x)
 
 md_heading_level(x) <- value
+
+md_list_type(x)
+
+md_list_type(x) <- value
 }
 \arguments{
 \item{x}{A markdown node.}

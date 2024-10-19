@@ -196,6 +196,19 @@ SEXP rmark_node_set_heading_level(SEXP x, SEXP value) {
     return x;
 }
 
+SEXP rmark_node_get_list_type(SEXP x) {
+    cmark_list_type list_type = cmark_node_get_list_type(NODE(x));
+    return Rf_ScalarInteger((list_type) ? list_type : NA_INTEGER);
+}
+
+SEXP rmark_node_set_list_type(SEXP x, SEXP value) {
+    cmark_list_type list_type = INTEGER(value)[0];
+    if (!cmark_node_set_list_type(NODE(x), list_type)) {
+        Rf_error("Failed to set list type to \"%d\".", list_type);
+    };
+    return x;
+}
+
 SEXP rmark_read_md(SEXP x) {
     static_assert(R_CONNECTIONS_VERSION == 1);
     Rconnection conn = R_GetConnection(x);
