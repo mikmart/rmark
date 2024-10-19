@@ -7,7 +7,7 @@
 read_md(x)
 }
 \arguments{
-\item{x}{A file path or a text connection.}
+\item{x}{A file path or \link[base:connections]{connection}.}
 }
 \value{
 A markdown node.

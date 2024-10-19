@@ -1,5 +1,5 @@
 #' Read a Markdown file
-#' @param x A file path or a text connection.
+#' @param x A file path or [connection][base::connections].
 #' @return A markdown node.
 #' @export
 read_md <- function(x) {
@@ -61,4 +61,22 @@ md_literal <- function(x) {
 print.rmark_node <- function(x, ...) {
   cat("<md_node<", md_type(x), ">>\n", sep = "")
   invisible(x)
+}
+
+#' @rdname md_node
+#' @export
+md_is_block <- function(x) {
+  .Call("rmark_node_is_block", x)
+}
+
+#' @rdname md_node
+#' @export
+md_is_inline <- function(x) {
+  .Call("rmark_node_is_inline", x)
+}
+
+#' @rdname md_node
+#' @export
+md_is_leaf <- function(x) {
+  .Call("rmark_node_is_leaf", x)
 }

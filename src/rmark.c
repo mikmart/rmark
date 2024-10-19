@@ -62,6 +62,21 @@ SEXP make_r_node(cmark_node *node, SEXP parent) {
 #define make_root_r_node(x) make_r_node(x, R_NilValue)
 
 attribute_visible
+SEXP rmark_node_is_block(SEXP x) {
+    return Rf_ScalarLogical(cmark_node_is_block(NODE(x)));
+}
+
+attribute_visible
+SEXP rmark_node_is_inline(SEXP x) {
+    return Rf_ScalarLogical(cmark_node_is_inline(NODE(x)));
+}
+
+attribute_visible
+SEXP rmark_node_is_leaf(SEXP x) {
+    return Rf_ScalarLogical(cmark_node_is_leaf(NODE(x)));
+}
+
+attribute_visible
 SEXP rmark_node_type(SEXP x) {
     return Rf_mkString(cmark_node_get_type_string(NODE(x)));
 }
