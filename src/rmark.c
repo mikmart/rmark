@@ -36,16 +36,19 @@ void *rmark_get_valid_ptr(SEXP x) {
 
 #define NODE(x) ((cmark_node *)VALIDPTR(Rf_getAttrib(x, Rf_install("ptr"))))
 
-void rmark_finalize_node_ptr(SEXP x) {
+void rmark_finalize_root_node_ptr(SEXP x) {
     cmark_node *node = VALIDPTR(x);
-    if (!cmark_node_parent(node)) {
-        cmark_node_free(node);
+    if (cmark_node_parent(node)) {
+        Rf_error("Internal error: Attempted to free non-root node.");
     }
+    cmark_node_free(node);
 }
 
 SEXP make_r_node(cmark_node *node, SEXP parent) {
     SEXP ptr = PROTECT(R_MakeExternalPtr(node, rmark_node_symbol, R_NilValue));
-    R_RegisterCFinalizer(ptr, &rmark_finalize_node_ptr);
+    if (Rf_isNull(parent)) {
+        R_RegisterCFinalizer(ptr, &rmark_finalize_root_node_ptr);
+    }
 
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 0));
     Rf_setAttrib(out, R_ClassSymbol, Rf_mkString("rmark_node"));
@@ -76,6 +79,14 @@ SEXP rmark_node_is_inline(SEXP x) {
 
 SEXP rmark_node_is_leaf(SEXP x) {
     return Rf_ScalarLogical(cmark_node_is_leaf(NODE(x)));
+}
+
+/** Creating Nodes */
+
+SEXP rmark_node_new(SEXP type) {
+    cmark_node_type node_type = INTEGER(type)[0];
+    cmark_node *node = cmark_node_new(node_type);
+    return make_root_r_node(node);
 }
 
 /** Tree Traversal */

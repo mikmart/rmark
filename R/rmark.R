@@ -67,6 +67,40 @@ md_is_leaf <- function(x) {
   .Call("rmark_node_is_leaf", x)
 }
 
+#' Creating Nodes
+#' @param type A string.
+#' @return A markdown node.
+#' @export
+md_new_node <- function(type = "document") {
+  type <- match.arg(type, CMARK_NODE_TYPES)
+  .Call("rmark_node_new", match(type, CMARK_NODE_TYPES))
+}
+
+CMARK_NODE_TYPES <- c(
+  # Block
+  "document",
+  "block_quote",
+  "list",
+  "item",
+  "code_block",
+  "html_block",
+  "custom_block",
+  "paragraph",
+  "heading",
+  "thematic_break",
+
+  # Inline
+  "text",
+  "softbreak",
+  "linebreak",
+  "code",
+  "html_inline",
+  "custom_inline",
+  "emph",
+  "strong",
+  "link",
+  "image"
+)
 
 #' Tree Traversal
 #' @param x A markdown node.
