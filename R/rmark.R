@@ -28,10 +28,13 @@ parse_md <- function(x) {
 
 #' Render Markdown
 #' @param x A markdown node.
+#' @param ... Arguments reserved for future use.
 #' @param format A string.
 #' @param width An integer.
 #' @export
-render_md <- function(x, format = "commonmark", width = getOption("width")) {
+render_md <- function(x, ..., format = "commonmark", width = getOption("width")) {
+  if (...length() > 0)
+    stop("`...` must be empty. Did you misspell or forget to name an argument?")
   format <- match.arg(format, CMARK_OUTPUT_FORMATS)
   .Call("rmark_render", x, match(format, CMARK_OUTPUT_FORMATS), as.integer(width))
 }

@@ -392,6 +392,8 @@ SEXP rmark_parse_md(SEXP x) {
 
 /** Rendering */
 
+// TODO: Allow customizing rendering options from R.
+
 typedef enum {
     RMARK_OUTPUT_NONE,
     RMARK_OUTPUT_COMMONMARK,
@@ -401,30 +403,36 @@ typedef enum {
     RMARK_OUTPUT_XML,
 } rmark_output_format;
 
-char *rmark_cmark_render(cmark_node *root, int options, int width, rmark_output_format format) {
-    switch (format) {
-        case RMARK_OUTPUT_NONE:
-            return NULL;
-        case RMARK_OUTPUT_COMMONMARK:
-            return cmark_render_commonmark(root, options, width);
-        case RMARK_OUTPUT_HTML:
-            return cmark_render_html(root, options);
-        case RMARK_OUTPUT_LATEX:
-            return cmark_render_latex(root, options, width);
-        case RMARK_OUTPUT_MAN:
-            return cmark_render_man(root, options, width);
-        case RMARK_OUTPUT_XML:
-            return cmark_render_xml(root, options);
-    }
-    return NULL;
-}
-
-SEXP rmark_render(SEXP x, SEXP output_format, SEXP width) {
+SEXP rmark_render(SEXP x, SEXP output_format, SEXP output_width) {
+    cmark_node *root = NODE(x);
     int options = CMARK_OPT_DEFAULT;
-    char *output = rmark_cmark_render(NODE(x), options, INTEGER(width)[0], INTEGER(output_format)[0]);
+    int width = INTEGER(output_width)[0];
+    rmark_output_format format = INTEGER(output_format)[0];
+
+    char *output = NULL;
+    switch (format) {
+        case RMARK_OUTPUT_COMMONMARK: {
+            output = cmark_render_commonmark(root, options, width);
+        } break;
+        case RMARK_OUTPUT_HTML: {
+            output = cmark_render_html(root, options);
+        } break;
+        case RMARK_OUTPUT_LATEX: {
+            output = cmark_render_latex(root, options, width);
+        } break;
+        case RMARK_OUTPUT_MAN: {
+            output = cmark_render_man(root, options, width);
+        } break;
+        case RMARK_OUTPUT_XML: {
+            output = cmark_render_xml(root, options);
+        } break;
+        default:
+            Rf_error("Unknown output format: %d.", format);
+    }
     if (!output) {
         Rf_error("Failed to render document.");
     }
+
     SEXP result = PROTECT(Rf_mkStringUTF8(output));
     free(output);
     UNPROTECT(1);
