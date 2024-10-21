@@ -24,20 +24,20 @@ SEXP rmark_make_utf8_strsxp(const char *string) {
     return strsxp;
 }
 
-#define VALIDPTR(x) rmark_get_valid_ptr(x)
+#define PTR(x) rmark_r_node_get_ptr(x)
 
-void *rmark_get_valid_ptr(SEXP x) {
-    void *ptr = R_ExternalPtrAddr(x);
-    if (!ptr) {
-        Rf_error("External pointer is invalid.");
+SEXP rmark_r_node_get_ptr(SEXP x) {
+    SEXP ptr = Rf_getAttrib(x, Rf_install("ptr"));
+    if (TYPEOF(ptr) != EXTPTRSXP || R_ExternalPtrTag(ptr) != rmark_node_symbol) {
+        Rf_error("`x` must be a Markdown node.");
     }
     return ptr;
 }
 
-#define NODE(x) ((cmark_node *)VALIDPTR(Rf_getAttrib(x, Rf_install("ptr"))))
+#define NODE(x) ((cmark_node *)R_ExternalPtrAddr(PTR(x)))
 
 void rmark_finalize_root_node_ptr(SEXP x) {
-    cmark_node *node = VALIDPTR(x);
+    cmark_node *node = R_ExternalPtrAddr(x);
     if (cmark_node_parent(node)) {
         Rf_error("Internal error: Attempted to free non-root node.");
     }
@@ -133,7 +133,7 @@ const char *rmark_cmark_event_type_string(cmark_event_type event) {
 }
 
 void rmark_finalize_iter_ptr(SEXP x) {
-    cmark_iter_free(VALIDPTR(x));
+    cmark_iter_free(R_ExternalPtrAddr(x));
 }
 
 SEXP rmark_iterate(SEXP x, SEXP callback, SEXP envir) {
@@ -355,7 +355,7 @@ SEXP rmark_node_append_child(SEXP x, SEXP new) {
 /** Parsing */
 
 void rmark_finalize_parser_ptr(SEXP x) {
-    cmark_parser_free(VALIDPTR(x));
+    cmark_parser_free(R_ExternalPtrAddr(x));
 }
 
 SEXP rmark_read_md(SEXP x) {
