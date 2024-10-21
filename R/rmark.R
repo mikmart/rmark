@@ -354,41 +354,61 @@ md_unlink <- function(x) {
 #' @rdname md_insert
 #' @export
 md_insert_before <- function(x, new) {
-  invisible(.Call("rmark_node_insert_before", x, new))
+  ok <- .Call("rmark_node_insert_before", x, new)
+  if (!ok) {
+    stop(sprintf("Can't insert %s into %s.", format(new), format(md_parent(x))))
+  }
+  invisible(NULL)
 }
 
 #' @rdname md_insert
 #' @export
 md_insert_after <- function(x, new) {
-  invisible(.Call("rmark_node_insert_after", x, new))
+  ok <- .Call("rmark_node_insert_after", x, new)
+  if (!ok) {
+    stop(sprintf("Can't insert %s into %s.", format(new), format(md_parent(x))))
+  }
+  invisible(NULL)
 }
 
 #' @rdname md_insert
 #' @export
 md_replace <- function(x, new) {
-  invisible(.Call("rmark_node_replace", x, new))
+  ok <- .Call("rmark_node_replace", x, new)
+  if (!ok) {
+    stop(sprintf("Can't replace %s with %s.", format(x), format(new)))
+  }
+  invisible(NULL)
 }
 
 #' @rdname md_insert
 #' @export
 md_prepend_child <- function(x, new) {
-  invisible(.Call("rmark_node_prepend_child", x, new))
+  ok <- .Call("rmark_node_prepend_child", x, new)
+  if (!ok) {
+    stop(sprintf("Can't insert %s into %s.", format(new), format(x)))
+  }
+  invisible(NULL)
 }
 
 #' @rdname md_insert
 #' @export
 md_append_child <- function(x, new) {
-  invisible(.Call("rmark_node_append_child", x, new))
+  ok <- .Call("rmark_node_append_child", x, new)
+  if (!ok) {
+    stop(sprintf("Can't insert %s into %s.", format(new), format(x)))
+  }
+  invisible(NULL)
 }
 
 
 #' @export
 print.rmark_node <- function(x, ...) {
-  cat(format(x, ...))
+  cat(format(x, ...), "\n")
   invisible(x)
 }
 
 #' @export
 format.rmark_node <- function(x, ...) {
-  paste("<md_node<", md_type(x), ">>\n", sep = "")
+  paste("<md_node<", md_type(x), ">>", sep = "")
 }

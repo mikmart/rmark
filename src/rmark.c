@@ -306,38 +306,28 @@ SEXP rmark_node_unlink(SEXP x) {
 }
 
 SEXP rmark_node_insert_before(SEXP x, SEXP new) {
-    if (!cmark_node_insert_before(NODE(x), NODE(new))) {
-        Rf_error("Failed to insert node.\n");
-    }
-    return R_NilValue;
+    int ret = cmark_node_insert_before(NODE(x), NODE(new));
+    return Rf_ScalarLogical(ret);
 }
 
 SEXP rmark_node_insert_after(SEXP x, SEXP new) {
-    if (!cmark_node_insert_after(NODE(x), NODE(new))) {
-        Rf_error("Failed to insert node.\n");
-    }
-    return R_NilValue;
+    int ret = cmark_node_insert_after(NODE(x), NODE(new));
+    return Rf_ScalarLogical(ret);
 }
 
 SEXP rmark_node_replace(SEXP x, SEXP new) {
-    if (!cmark_node_replace(NODE(x), NODE(new))) {
-        Rf_error("Failed to replace node.\n");
-    }
-    return R_NilValue;
+    int ret = cmark_node_replace(NODE(x), NODE(new));
+    return Rf_ScalarLogical(ret);
 }
 
 SEXP rmark_node_prepend_child(SEXP x, SEXP new) {
-    if (!cmark_node_prepend_child(NODE(x), NODE(new))) {
-        Rf_error("Failed to insert node.");
-    };
-    return R_NilValue;
+    int ret = cmark_node_prepend_child(NODE(x), NODE(new));
+    return Rf_ScalarLogical(ret);
 }
 
 SEXP rmark_node_append_child(SEXP x, SEXP new) {
-    if (!cmark_node_append_child(NODE(x), NODE(new))) {
-        Rf_error("Failed to insert node.");
-    };
-    return R_NilValue;
+    int ret = cmark_node_append_child(NODE(x), NODE(new));
+    return Rf_ScalarLogical(ret);
 }
 
 // TODO: Support consolidate text nodes? What if we hold external pointers to them?
