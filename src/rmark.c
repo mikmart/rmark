@@ -36,30 +36,20 @@ SEXP rmark_r_node_get_ptr(SEXP x) {
 
 #define NODE(x) ((cmark_node *)R_ExternalPtrAddr(PTR(x)))
 
-void rmark_finalize_root_node_ptr(SEXP x) {
-    cmark_node *node = R_ExternalPtrAddr(x);
-    if (cmark_node_parent(node)) {
-        Rf_error("Internal error: Attempted to free non-root node.");
+void rmark_finalize_node_ptr(SEXP x) {
+    SEXP root = R_ExternalPtrProtected(x);
+    if (Rf_isNull(root)) {
+        cmark_node_free(R_ExternalPtrAddr(x));
     }
-    cmark_node_free(node);
 }
 
-SEXP make_r_node(cmark_node *node, SEXP parent) {
-    SEXP ptr = PROTECT(R_MakeExternalPtr(node, rmark_node_symbol, R_NilValue));
-    if (Rf_isNull(parent)) {
-        R_RegisterCFinalizer(ptr, &rmark_finalize_root_node_ptr);
-    }
+SEXP make_r_node(cmark_node *node, SEXP root) {
+    SEXP ptr = PROTECT(R_MakeExternalPtr(node, rmark_node_symbol, root));
+    R_RegisterCFinalizer(ptr, &rmark_finalize_node_ptr);
 
     SEXP out = PROTECT(Rf_allocVector(VECSXP, 0));
     Rf_setAttrib(out, R_ClassSymbol, Rf_mkString("rmark_node"));
     Rf_setAttrib(out, Rf_install("ptr"), ptr);
-
-    if (!Rf_isNull(parent)) {
-        // Keep a reference to the parent pointer to stop it from being collected early.
-        SEXP parent_ptr = Rf_getAttrib(parent, Rf_install("ptr"));
-        CHECK_TYPEOF(parent_ptr, EXTPTRSXP);
-        Rf_setAttrib(out, Rf_install("parent"), parent_ptr);
-    }
 
     UNPROTECT(2);
     return out;
