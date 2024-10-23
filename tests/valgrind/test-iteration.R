@@ -2,7 +2,7 @@ library(rmark)
 
 root <- parse_md("# Hello")
 md_iterate(root, function(node, event) {
-  cat(event, "ing ", format(node), sep = "")
+  cat(event, "ing ", format(node), "\n", sep = "")
 })
 gc()
 

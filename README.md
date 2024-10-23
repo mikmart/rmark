@@ -1,5 +1,7 @@
 # rmark
 
+_**NB** This project is experimental and subject to change at any time._
+
 R bindings for the Commonmark C library [cmark](https://github.com/commonmark/cmark).
 
 ## Development

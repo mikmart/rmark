@@ -7,10 +7,32 @@ gc()
 
 # Root does not deallocate while children are around.
 child <- md_first_child(root)
-root <- NULL
+rm(root)
+gc()
 child
+
+# Root does deallocate once child is dropped.
+rm(child)
 gc()
 
-# Child of childless node is NULL.
-text_node <- md_first_child(child)
-md_first_child(text_node)
+# Losing a child reference doesn't deallocate.
+root <- parse_md("# Hello")
+child <- md_first_child(root)
+rm(child)
+gc()
+if (is.null(md_first_child(root))) {
+  stop("Child was dropped.")
+}
+
+# Dropping a reference to root acquired via md_parent() doesn't deallocate.
+root <- parse_md("# Hello")
+child <- md_first_child(root)
+parent <- md_parent(root)
+rm(parent, child)
+gc()
+root
+
+# Unlinked nodes get cleaned up.
+root <- read_md("README.md")
+md_unlink(md_first_child(root))
+gc()
