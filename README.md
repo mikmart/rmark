@@ -27,3 +27,9 @@ Run memory tests:
 ./tools/test valgrind iteration
 ./tools/test valgrind read
 ```
+
+## Prior Art
+
+- [commonmark](https://docs.ropensci.org/commonmark/) implements a narrower interface to the [GitHub fork of cmark](https://github.com/github/cmark-gfm/).
+- [markdown](https://github.com/rstudio/markdown) builds on commonmark for more rendering features.
+- [tinkr](https://docs.ropensci.org/tinkr/) builds on commonmark to expose editing Markdown documents via an XML representation.
