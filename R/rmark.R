@@ -113,21 +113,18 @@ NULL
 #' @rdname md_traversal
 #' @export
 md_next <- function(x) {
-  # TODO: When does this not return NULL?
   .Call("rmark_node_next", x)
 }
 
 #' @rdname md_traversal
 #' @export
 md_previous <- function(x) {
-  # TODO: When does this not return NULL?
   .Call("rmark_node_previous", x)
 }
 
 #' @rdname md_traversal
 #' @export
 md_parent <- function(x) {
-  # TODO: Is everything fucked if we create a new external pointer to the root?
   .Call("rmark_node_parent", x)
 }
 
