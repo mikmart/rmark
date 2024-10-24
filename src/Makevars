@@ -1,3 +1,2 @@
-# TODO: Uncomment once using registration.
-# PKG_CFLAGS = $(C_VISIBILITY)
+PKG_CFLAGS = $(C_VISIBILITY)
 PKG_LIBS = -lcmark

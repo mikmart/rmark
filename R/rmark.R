@@ -9,7 +9,7 @@ read_md <- function(x) {
     open(x, "r")
     on.exit(close(x))
   }
-  .Call("rmark_read_md", x)
+  .Call(rmark_read_md, x)
 }
 
 #' Parse Markdown text
@@ -23,7 +23,7 @@ parse_md <- function(x) {
     x <- as.character(x)
   if (length(x) > 1)
     x <- paste(x, collapse = "\n")
-  .Call("rmark_parse_md", x)
+  .Call(rmark_parse_md, x)
 }
 
 #' Render Markdown
@@ -36,7 +36,7 @@ render_md <- function(x, ..., format = "commonmark", width = getOption("width"))
   if (...length() > 0)
     stop("`...` must be empty. Did you misspell or forget to name an argument?")
   format <- match.arg(format, CMARK_OUTPUT_FORMATS)
-  .Call("rmark_render", x, match(format, CMARK_OUTPUT_FORMATS), as.integer(width))
+  .Call(rmark_render, x, match(format, CMARK_OUTPUT_FORMATS), as.integer(width))
 }
 
 CMARK_OUTPUT_FORMATS <- c("commonmark", "html", "latex", "man", "xml")
@@ -55,19 +55,19 @@ is_md <- function(x) {
 #' @rdname md_is
 #' @export
 md_is_block <- function(x) {
-  .Call("rmark_node_is_block", x)
+  .Call(rmark_node_is_block, x)
 }
 
 #' @rdname md_is
 #' @export
 md_is_inline <- function(x) {
-  .Call("rmark_node_is_inline", x)
+  .Call(rmark_node_is_inline, x)
 }
 
 #' @rdname md_is
 #' @export
 md_is_leaf <- function(x) {
-  .Call("rmark_node_is_leaf", x)
+  .Call(rmark_node_is_leaf, x)
 }
 
 #' Creating Nodes
@@ -76,7 +76,7 @@ md_is_leaf <- function(x) {
 #' @export
 md_new_node <- function(type = "document") {
   type <- match.arg(type, CMARK_NODE_TYPES)
-  .Call("rmark_node_new", match(type, CMARK_NODE_TYPES))
+  .Call(rmark_node_new, match(type, CMARK_NODE_TYPES))
 }
 
 CMARK_NODE_TYPES <- c(
@@ -113,31 +113,31 @@ NULL
 #' @rdname md_traversal
 #' @export
 md_next <- function(x) {
-  .Call("rmark_node_next", x)
+  .Call(rmark_node_next, x)
 }
 
 #' @rdname md_traversal
 #' @export
 md_previous <- function(x) {
-  .Call("rmark_node_previous", x)
+  .Call(rmark_node_previous, x)
 }
 
 #' @rdname md_traversal
 #' @export
 md_parent <- function(x) {
-  .Call("rmark_node_parent", x)
+  .Call(rmark_node_parent, x)
 }
 
 #' @rdname md_traversal
 #' @export
 md_first_child <- function(x) {
-  .Call("rmark_node_first_child", x)
+  .Call(rmark_node_first_child, x)
 }
 
 #' @rdname md_traversal
 #' @export
 md_last_child <- function(x) {
-  .Call("rmark_node_last_child", x)
+  .Call(rmark_node_last_child, x)
 }
 
 
@@ -152,7 +152,7 @@ md_last_child <- function(x) {
 #' })
 #' @export
 md_iterate <- function(x, callback) {
-  invisible(.Call("rmark_iterate", x, callback, parent.frame()))
+  invisible(.Call(rmark_iterate, x, callback, parent.frame()))
 }
 
 
@@ -164,13 +164,13 @@ NULL
 #' @rdname md_node
 #' @export
 md_type <- function(x) {
-  .Call("rmark_node_get_type_string", x)
+  .Call(rmark_node_get_type_string, x)
 }
 
 #' @rdname md_node
 #' @export
 md_literal <- function(x) {
-  .Call("rmark_node_get_literal", x)
+  .Call(rmark_node_get_literal, x)
 }
 
 #' @param value A string.
@@ -180,13 +180,13 @@ md_literal <- function(x) {
   if (!md_is_leaf(x))
     stop("`x` must be a leaf node, not a node of type <", md_type(x), ">.")
   stopifnot(length(value) == 1 && !is.na(value))
-  .Call("rmark_node_set_literal", x, as.character(value))
+  .Call(rmark_node_set_literal, x, as.character(value))
 }
 
 #' @rdname md_node
 #' @export
 md_heading_level <- function(x) {
-  .Call("rmark_node_get_heading_level", x)
+  .Call(rmark_node_get_heading_level, x)
 }
 
 #' @rdname md_node
@@ -195,13 +195,13 @@ md_heading_level <- function(x) {
   if (md_type(x) != "heading")
     stop("`x` must be a heading node, not a node of type <", md_type(x), ">.")
   stopifnot(length(value) == 1 && !is.na(value))
-  .Call("rmark_node_set_heading_level", x, as.integer(value))
+  .Call(rmark_node_set_heading_level, x, as.integer(value))
 }
 
 #' @rdname md_node
 #' @export
 md_list_type <- function(x) {
-  MD_LIST_TYPES[.Call("rmark_node_get_list_type", x)]
+  MD_LIST_TYPES[.Call(rmark_node_get_list_type, x)]
 }
 
 #' @rdname md_node
@@ -211,7 +211,7 @@ md_list_type <- function(x) {
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
   stopifnot(length(value) == 1)
   value <- match.arg(value, MD_LIST_TYPES)
-  .Call("rmark_node_set_list_type", x, match(value, MD_LIST_TYPES))
+  .Call(rmark_node_set_list_type, x, match(value, MD_LIST_TYPES))
 }
 
 MD_LIST_TYPES <- c("bullet", "ordered")
@@ -219,7 +219,7 @@ MD_LIST_TYPES <- c("bullet", "ordered")
 #' @rdname md_node
 #' @export
 md_list_delim <- function(x) {
-  MD_LIST_DELIMS[.Call("rmark_node_get_list_delim", x)]
+  MD_LIST_DELIMS[.Call(rmark_node_get_list_delim, x)]
 }
 
 #' @rdname md_node
@@ -229,7 +229,7 @@ md_list_delim <- function(x) {
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
   stopifnot(length(value) == 1)
   value <- match.arg(value, MD_LIST_DELIMS)
-  .Call("rmark_node_set_list_delim", x, match(value, MD_LIST_DELIMS))
+  .Call(rmark_node_set_list_delim, x, match(value, MD_LIST_DELIMS))
 }
 
 MD_LIST_DELIMS <- c("period", "paren")
@@ -237,7 +237,7 @@ MD_LIST_DELIMS <- c("period", "paren")
 #' @rdname md_node
 #' @export
 md_list_start <- function(x) {
-  .Call("rmark_node_get_list_start", x)
+  .Call(rmark_node_get_list_start, x)
 }
 
 #' @rdname md_node
@@ -246,7 +246,7 @@ md_list_start <- function(x) {
   if (md_type(x) != "list")
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
   stopifnot(length(value) == 1 && !is.na(value))
-  .Call("rmark_node_set_list_start", x, as.integer(value))
+  .Call(rmark_node_set_list_start, x, as.integer(value))
 }
 
 #' @rdname md_node
@@ -254,7 +254,7 @@ md_list_start <- function(x) {
 md_list_tight <- function(x) {
   if (md_type(x) != "list")
     return(NA) # C API does not communicate "inapplicable".
-  .Call("rmark_node_get_list_tight", x)
+  .Call(rmark_node_get_list_tight, x)
 }
 
 #' @rdname md_node
@@ -263,7 +263,7 @@ md_list_tight <- function(x) {
   if (md_type(x) != "list")
     stop("`x` must be a list node, not a node of type <", md_type(x), ">.")
   stopifnot(length(value) == 1 && !is.na(value))
-  .Call("rmark_node_set_list_tight", x, as.logical(value))
+  .Call(rmark_node_set_list_tight, x, as.logical(value))
 }
 
 # TODO: Add node type validation to rest of the accessors below.
@@ -271,37 +271,37 @@ md_list_tight <- function(x) {
 #' @rdname md_node
 #' @export
 md_fence_info <- function(x) {
-  .Call("rmark_node_get_fence_info", x)
+  .Call(rmark_node_get_fence_info, x)
 }
 
 #' @rdname md_node
 #' @export
 `md_fence_info<-` <- function(x, value) {
-  .Call("rmark_node_set_fence_info", x, as.character(value))
+  .Call(rmark_node_set_fence_info, x, as.character(value))
 }
 
 #' @rdname md_node
 #' @export
 md_url <- function(x) {
-  .Call("rmark_node_get_url", x)
+  .Call(rmark_node_get_url, x)
 }
 
 #' @rdname md_node
 #' @export
 `md_url<-` <- function(x, value) {
-  .Call("rmark_node_set_url", x, as.character(value))
+  .Call(rmark_node_set_url, x, as.character(value))
 }
 
 #' @rdname md_node
 #' @export
 md_title <- function(x) {
-  .Call("rmark_node_get_title", x)
+  .Call(rmark_node_get_title, x)
 }
 
 #' @rdname md_node
 #' @export
 `md_title<-` <- function(x, value) {
-  .Call("rmark_node_set_title", x, as.character(value))
+  .Call(rmark_node_set_title, x, as.character(value))
 }
 
 #' Location in Source Document
@@ -313,25 +313,25 @@ NULL
 #' @rdname md_location
 #' @export
 md_start_line <- function(x) {
-  .Call("rmark_node_get_start_line", x)
+  .Call(rmark_node_get_start_line, x)
 }
 
 #' @rdname md_location
 #' @export
 md_start_column <- function(x) {
-  .Call("rmark_node_get_start_column", x)
+  .Call(rmark_node_get_start_column, x)
 }
 
 #' @rdname md_location
 #' @export
 md_end_line <- function(x) {
-  .Call("rmark_node_get_end_line", x)
+  .Call(rmark_node_get_end_line, x)
 }
 
 #' @rdname md_location
 #' @export
 md_end_column <- function(x) {
-  .Call("rmark_node_get_end_column", x)
+  .Call(rmark_node_get_end_column, x)
 }
 
 
@@ -345,13 +345,13 @@ NULL
 #' @rdname md_insert
 #' @export
 md_unlink <- function(x) {
-  invisible(.Call("rmark_node_unlink", x))
+  invisible(.Call(rmark_node_unlink, x))
 }
 
 #' @rdname md_insert
 #' @export
 md_insert_before <- function(x, new) {
-  ok <- .Call("rmark_node_insert_before", x, new)
+  ok <- .Call(rmark_node_insert_before, x, new)
   if (!ok) {
     stop(sprintf("Can't insert %s into %s.", format(new), format(md_parent(x))))
   }
@@ -361,7 +361,7 @@ md_insert_before <- function(x, new) {
 #' @rdname md_insert
 #' @export
 md_insert_after <- function(x, new) {
-  ok <- .Call("rmark_node_insert_after", x, new)
+  ok <- .Call(rmark_node_insert_after, x, new)
   if (!ok) {
     stop(sprintf("Can't insert %s into %s.", format(new), format(md_parent(x))))
   }
@@ -371,7 +371,7 @@ md_insert_after <- function(x, new) {
 #' @rdname md_insert
 #' @export
 md_replace <- function(x, new) {
-  ok <- .Call("rmark_node_replace", x, new)
+  ok <- .Call(rmark_node_replace, x, new)
   if (!ok) {
     stop(sprintf("Can't replace %s with %s.", format(x), format(new)))
   }
@@ -381,7 +381,7 @@ md_replace <- function(x, new) {
 #' @rdname md_insert
 #' @export
 md_prepend_child <- function(x, new) {
-  ok <- .Call("rmark_node_prepend_child", x, new)
+  ok <- .Call(rmark_node_prepend_child, x, new)
   if (!ok) {
     stop(sprintf("Can't insert %s into %s.", format(new), format(x)))
   }
@@ -391,7 +391,7 @@ md_prepend_child <- function(x, new) {
 #' @rdname md_insert
 #' @export
 md_append_child <- function(x, new) {
-  ok <- .Call("rmark_node_append_child", x, new)
+  ok <- .Call(rmark_node_append_child, x, new)
   if (!ok) {
     stop(sprintf("Can't insert %s into %s.", format(new), format(x)))
   }

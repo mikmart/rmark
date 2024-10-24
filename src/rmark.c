@@ -570,7 +570,54 @@ SEXP rmark_cmark_version_string() {
 
 /** R Package Initialization */
 
+R_CallMethodDef call_method_defs[] = {
+    { "rmark_cmark_version_string",   (DL_FUNC) &rmark_cmark_version_string,   0 },
+    { "rmark_read_md",                (DL_FUNC) &rmark_read_md,                1 },
+    { "rmark_parse_md",               (DL_FUNC) &rmark_parse_md,               1 },
+    { "rmark_render",                 (DL_FUNC) &rmark_render,                 3 },
+    { "rmark_node_is_block",          (DL_FUNC) &rmark_node_is_block,          1 },
+    { "rmark_node_is_inline",         (DL_FUNC) &rmark_node_is_inline,         1 },
+    { "rmark_node_is_leaf",           (DL_FUNC) &rmark_node_is_leaf,           1 },
+    { "rmark_node_new",               (DL_FUNC) &rmark_node_new,               1 },
+    { "rmark_node_next",              (DL_FUNC) &rmark_node_next,              1 },
+    { "rmark_node_previous",          (DL_FUNC) &rmark_node_previous,          1 },
+    { "rmark_node_parent",            (DL_FUNC) &rmark_node_parent,            1 },
+    { "rmark_node_first_child",       (DL_FUNC) &rmark_node_first_child,       1 },
+    { "rmark_node_last_child",        (DL_FUNC) &rmark_node_last_child,        1 },
+    { "rmark_iterate",                (DL_FUNC) &rmark_iterate,                3 },
+    { "rmark_node_get_type_string",   (DL_FUNC) &rmark_node_get_type_string,   1 },
+    { "rmark_node_get_literal",       (DL_FUNC) &rmark_node_get_literal,       1 },
+    { "rmark_node_set_literal",       (DL_FUNC) &rmark_node_set_literal,       2 },
+    { "rmark_node_get_heading_level", (DL_FUNC) &rmark_node_get_heading_level, 1 },
+    { "rmark_node_set_heading_level", (DL_FUNC) &rmark_node_set_heading_level, 2 },
+    { "rmark_node_get_list_type",     (DL_FUNC) &rmark_node_get_list_type,     1 },
+    { "rmark_node_set_list_type",     (DL_FUNC) &rmark_node_set_list_type,     2 },
+    { "rmark_node_get_list_delim",    (DL_FUNC) &rmark_node_get_list_delim,    1 },
+    { "rmark_node_set_list_delim",    (DL_FUNC) &rmark_node_set_list_delim,    2 },
+    { "rmark_node_get_list_start",    (DL_FUNC) &rmark_node_get_list_start,    1 },
+    { "rmark_node_set_list_start",    (DL_FUNC) &rmark_node_set_list_start,    2 },
+    { "rmark_node_get_list_tight",    (DL_FUNC) &rmark_node_get_list_tight,    1 },
+    { "rmark_node_set_list_tight",    (DL_FUNC) &rmark_node_set_list_tight,    2 },
+    { "rmark_node_get_fence_info",    (DL_FUNC) &rmark_node_get_fence_info,    1 },
+    { "rmark_node_set_fence_info",    (DL_FUNC) &rmark_node_set_fence_info,    2 },
+    { "rmark_node_get_url",           (DL_FUNC) &rmark_node_get_url,           1 },
+    { "rmark_node_set_url",           (DL_FUNC) &rmark_node_set_url,           2 },
+    { "rmark_node_get_title",         (DL_FUNC) &rmark_node_get_title,         1 },
+    { "rmark_node_set_title",         (DL_FUNC) &rmark_node_set_title,         2 },
+    { "rmark_node_get_start_line",    (DL_FUNC) &rmark_node_get_start_line,    1 },
+    { "rmark_node_get_start_column",  (DL_FUNC) &rmark_node_get_start_column,  1 },
+    { "rmark_node_get_end_line",      (DL_FUNC) &rmark_node_get_end_line,      1 },
+    { "rmark_node_get_end_column",    (DL_FUNC) &rmark_node_get_end_column,    1 },
+    { "rmark_node_unlink",            (DL_FUNC) &rmark_node_unlink,            1 },
+    { "rmark_node_insert_before",     (DL_FUNC) &rmark_node_insert_before,     2 },
+    { "rmark_node_insert_after",      (DL_FUNC) &rmark_node_insert_after,      2 },
+    { "rmark_node_replace",           (DL_FUNC) &rmark_node_replace,           2 },
+    { "rmark_node_prepend_child",     (DL_FUNC) &rmark_node_prepend_child,     2 },
+    { "rmark_node_append_child",      (DL_FUNC) &rmark_node_append_child,      2 },
+};
+
 attribute_visible void R_init_rmark(DllInfo *dll_info) {
     rmark_root_symbol = Rf_install("rmark_root");
     rmark_node_symbol = Rf_install("rmark_node");
+    R_registerRoutines(dll_info, NULL, call_method_defs, NULL, NULL);
 }
